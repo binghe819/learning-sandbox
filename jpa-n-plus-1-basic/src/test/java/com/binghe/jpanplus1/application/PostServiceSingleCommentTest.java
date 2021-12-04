@@ -2,7 +2,6 @@ package com.binghe.jpanplus1.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.binghe.jpanplus1.config.Count;
 import com.binghe.jpanplus1.config.QueryCounter;
 import com.binghe.jpanplus1.domain.Comment;
 import com.binghe.jpanplus1.domain.Post;

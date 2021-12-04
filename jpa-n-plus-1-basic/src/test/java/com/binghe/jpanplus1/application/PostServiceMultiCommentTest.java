@@ -9,6 +9,7 @@ import com.binghe.jpanplus1.domain.PostRepository;
 import com.binghe.jpanplus1.domain.User;
 import com.binghe.jpanplus1.domain.UserRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,9 +40,9 @@ public class PostServiceMultiCommentTest {
 
     @BeforeEach
     void setUp() {
-        User user = userRepository.save(User.builder().name("빙허").build());
-
         for (int i = 0; i < 10; i++) {
+            User user = userRepository.save(User.builder().name("빙허" + i).build());
+
             Post post = Post.builder()
                 .title("N + 1 문제" + i)
                 .content("N + 1 문제를 해결해보아요." + i)
@@ -88,6 +89,31 @@ public class PostServiceMultiCommentTest {
         List<String> allCommentContents = postService.findAllCommentContentsByEntityGraphDistinct();
 
         assertThat(allCommentContents).hasSize(20);
+        assertThat(queryCounter.getCount().getValue()).isEqualTo(1);
+        printQueryCount();
+    }
+
+    @DisplayName("중복 제거 + 여러 단계 Fetch Join")
+    @Test
+    void findAllFetchJoinWithCommentWriter() {
+        // given
+        queryCounter.startCount();
+        List<Post> posts = postRepository.findAllFetchJoinWithCommentWriter();
+
+        // when
+        // 기존의 Post의 Comments 가져오는 코드.
+        List<String> comments = posts.stream()
+            .flatMap(post -> post.getComments().stream().map(Comment::getContent))
+            .collect(Collectors.toList());
+
+        // (User는 Lazy이지만, 여러 단계의 Fetch Join을 통해 User도 한 번에 가져왔기 때문에 추가로 쿼리가 날아가지 않는다.)
+        List<String> userNames = posts.stream()
+            .map(post -> post.getWriter().getName())
+            .collect(Collectors.toList());
+
+        // then
+        assertThat(comments).hasSize(20);
+        assertThat(userNames).hasSize(10);
         assertThat(queryCounter.getCount().getValue()).isEqualTo(1);
         printQueryCount();
     }

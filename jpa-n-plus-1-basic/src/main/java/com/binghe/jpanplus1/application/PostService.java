@@ -40,6 +40,7 @@ public class PostService {
         return extractCommentContents(postRepository.findAllEntityGraphDistinct());
     }
 
+
     private List<String> extractCommentContents(List<Post> posts) {
         return posts.stream()
             .flatMap(post -> post.getComments().stream().map(Comment::getContent))
