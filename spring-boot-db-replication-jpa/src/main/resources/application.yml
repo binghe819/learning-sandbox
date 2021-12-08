@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        show-sql: false
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        hbm2ddl:
+          auto: none
+      jdbc:
+        lob:
+        non_contextual_creation: true
+      generate-ddl: true
+
+datasource:
+  master:
+    name: master
+    url: {DB IP주소, 포트 및 스키마 명}
+    username: {DB 계정}
+    password: {비밀번호}
+  slave:
+    slave1:
+      name: slave1
+      url: {DB IP주소, 포트 및 스키마 명}
+      username: {DB 계정}
+      password: {비밀번호}
+    slave2:
+      name: slave2
+      url: {DB IP주소, 포트 및 스키마 명}
+      username: {DB 계정}
+      password: {비밀번호}
