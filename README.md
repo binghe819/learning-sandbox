@@ -1,4 +1,23 @@
 # 학습 테스트 - Sandbox
 
+> 학습 테스트 정리 저장소.
 
+
+<br>
+
+## Spring
+* Spring Core
+  * [빈 생명주기 및 콜백 메서드](https://github.com/binghe819/learning-sandbox/tree/master/spring-boot-bean-life-cycle)
+* Spring Data Redis
+  * [내장 Redis](https://github.com/binghe819/learning-sandbox/tree/master/embedded-redis)
+  * [Jedis vs Lettuce - example](https://github.com/binghe819/learning-sandbox/tree/master/jedis-vs-lettuce-example)
+* DB
+  * [Spring Boot + JPA기반의 DB Replication](https://github.com/binghe819/learning-sandbox/tree/master/spring-boot-db-replication-jpa)
+
+<br>
+
+## JPA
+* [N + 1 문제와 해결](https://github.com/binghe819/learning-sandbox/tree/master/jpa-n-plus-1-basic)
+
+<br>
 
