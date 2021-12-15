@@ -1,0 +1,10 @@
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        dialects: org.hibernate.dialect.MySQL57Dialect
+        format_sql: false
+    generate-ddl: false
+    hibernate:
+      ddl-auto: create-drop
