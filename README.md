@@ -17,6 +17,7 @@
 <br>
 
 ## JPA
+* [JPA 학습 테스트 with 자바 ORM 표준 JPA 프로그래밍](https://github.com/binghe819/jpa-learning-sandbox)
 * [N + 1 문제와 해결](https://github.com/binghe819/learning-sandbox/tree/master/jpa-n-plus-1-basic)
 
 <br>
