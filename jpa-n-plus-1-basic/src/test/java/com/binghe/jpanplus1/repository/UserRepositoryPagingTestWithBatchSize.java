@@ -18,7 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.TestPropertySource;
 
-@DisplayName("둘 이상의 컬렉션 Fetch Join 테스트 - Batch Size 설정 O")
+@DisplayName("페이징 + 컬렉션 패치 조인 테스트 - Batch Size 설정 O")
 @TestPropertySource(properties = "spring.jpa.properties.hibernate.default_batch_fetch_size=1000") // 옵션 적용
 @DataJpaTest
 public class UserRepositoryPagingTestWithBatchSize {
@@ -56,6 +56,7 @@ public class UserRepositoryPagingTestWithBatchSize {
         List<User> users = userRepository.findAll(PageRequest.of(0, 5));
 
         List<Integer> postSumPerUser = calculatePostSumPerUser(users);
+        List<Integer> commentSumPerUser = calculateCommentSumPerUser(users);
 
         assertThat(users)
             .hasSize(5)
@@ -67,6 +68,14 @@ public class UserRepositoryPagingTestWithBatchSize {
         return users.stream()
             .map(User::getPosts)
             .map(posts -> posts.stream().map(Post::getContent).collect(toList()))
+            .map(List::size)
+            .collect(toList());
+    }
+
+    private List<Integer> calculateCommentSumPerUser(List<User> users) {
+        return users.stream()
+            .map(User::getComments)
+            .map(comments -> comments.stream().map(Comment::getContent).collect(toList()))
             .map(List::size)
             .collect(toList());
     }

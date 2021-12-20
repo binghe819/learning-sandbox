@@ -54,6 +54,7 @@ public class UserRepositoryPagingTestWithoutBatchSize {
         List<User> users = userRepository.findAllWithPost(PageRequest.of(0, 5));
 
         List<Integer> postSumPerUser = calculatePostSumPerUser(users);
+//        List<Integer> commentSumPerUser = calculateCommentSumPerUser(users);
 
         // 페이지 사이즈에 맞게 데이터를 가져오지만, 쿼리에 LIMIT으로 필터링하지 않고, 전체 데이터를 가져와서 JPA가 필터링한다.
         assertThat(users)
@@ -66,6 +67,14 @@ public class UserRepositoryPagingTestWithoutBatchSize {
         return users.stream()
             .map(User::getPosts)
             .map(posts -> posts.stream().map(Post::getContent).collect(toList()))
+            .map(List::size)
+            .collect(toList());
+    }
+
+    private List<Integer> calculateCommentSumPerUser(List<User> users) {
+        return users.stream()
+            .map(User::getComments)
+            .map(comments -> comments.stream().map(Comment::getContent).collect(toList()))
             .map(List::size)
             .collect(toList());
     }
