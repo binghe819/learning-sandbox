@@ -18,7 +18,7 @@ public class UserApiAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = 유저_생성_요청("binghe", 27);
 
         // then
-        assertThat(response.header("Location")).isNotBlank();
+        Assertions.assertThat(response.header("Location")).isNotBlank();
     }
 
     @Test

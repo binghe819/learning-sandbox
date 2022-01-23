@@ -1,1 +1,5 @@
 rootProject.name = 'gradle-multi-module'
+include 'module-api-read'
+include 'module-common'
+include 'module-api-command'
+

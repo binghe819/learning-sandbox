@@ -1,13 +1,12 @@
-package com.binghe.gradlemultimodule;
+package com.binghe;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GradleMultiModuleApplication {
+public class CommandApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GradleMultiModuleApplication.class, args);
+        SpringApplication.run(CommandApiApplication.class, args);
     }
-
 }

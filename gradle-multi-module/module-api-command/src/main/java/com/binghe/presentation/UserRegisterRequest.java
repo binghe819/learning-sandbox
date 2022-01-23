@@ -1,4 +1,4 @@
-package com.binghe.gradlemultimodule.presentation;
+package com.binghe.presentation;
 
 import lombok.Getter;
 
