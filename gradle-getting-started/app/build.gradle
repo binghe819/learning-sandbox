@@ -33,3 +33,30 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+tasks.register('upper') {
+    doLast {
+        String someString = 'mY_nAmE'
+        println "Original: $someString"
+        println "Upper case: ${someString.toUpperCase()}"
+    }
+}
+
+tasks.register('count') {
+    doLast {
+        4.times { println "$it " }
+    }
+}
+
+tasks.register('hello') {
+    doLast {
+        println 'Hello World'
+    }
+}
+
+tasks.register('intro') {
+    dependsOn tasks.hello
+    doLast {
+        println "I'm Gradle"
+    }
+}
