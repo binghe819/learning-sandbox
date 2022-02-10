@@ -8,6 +8,7 @@
 ## Spring
 * Spring Core
   * [빈 생명주기 및 콜백 메서드](https://github.com/binghe819/learning-sandbox/tree/master/spring-boot-bean-life-cycle)
+  * [TheadLocal](https://github.com/binghe819/learning-sandbox/tree/master/spring-core-threadlocal)
 * Spring Data Redis
   * [내장 Redis](https://github.com/binghe819/learning-sandbox/tree/master/embedded-redis)
   * [Jedis vs Lettuce - example](https://github.com/binghe819/learning-sandbox/tree/master/jedis-vs-lettuce-example)
@@ -24,6 +25,12 @@
 
 ## JAVA
 * [Java Thread](https://github.com/binghe819/learning-sandbox/tree/master/java-thread-and-thread-pool)
+
+<br>
+
+## 빌드
+* [Gradle 시작하기](https://github.com/binghe819/learning-sandbox/tree/master/gradle-getting-started)
+* [Gradle 멀티 모듈 적용하기 with Gradle, Spring](https://github.com/binghe819/learning-sandbox/tree/master/gradle-multi-module)
 
 <br>
 
