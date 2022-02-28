@@ -25,5 +25,5 @@ fun main() {
     println(joinToString(list, ";", "(", ")"))
 
     val list2 = joinToString(list, separator = ".", prefix = "", postfix = "")
-    println(list2)
+    print(list2)
 }
