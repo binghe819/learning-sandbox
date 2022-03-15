@@ -1,4 +1,4 @@
-package why_unit_test_01;
+package chapter01;
 
 public class StringLongUtil {
     private static boolean WAS_LAST_STRING_LONG = false;

@@ -1,7 +1,6 @@
-package why_unit_test_01;
+package chapter01;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
