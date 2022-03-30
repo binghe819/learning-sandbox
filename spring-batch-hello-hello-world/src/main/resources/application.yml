@@ -1,4 +1,8 @@
 spring.profiles.active: local
+spring:
+  batch:
+    job:
+      names: ${job.name:NONE}
 
 ---
 spring.profiles: local
