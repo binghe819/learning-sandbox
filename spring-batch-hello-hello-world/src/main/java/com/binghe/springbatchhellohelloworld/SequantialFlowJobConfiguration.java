@@ -15,14 +15,14 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 @Slf4j
 @Configuration
-public class StepFlowJobConfiguration {
+public class SequantialFlowJobConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
     @Bean
     public Job stepFlowJob() {
-        return jobBuilderFactory.get("stepFlowJob")
+        return jobBuilderFactory.get("sequantialFlowJob")
                 .start(stepFlowStepA())
                 .next(stepFlowStepB())
                 .next(stepFlowStepC())
