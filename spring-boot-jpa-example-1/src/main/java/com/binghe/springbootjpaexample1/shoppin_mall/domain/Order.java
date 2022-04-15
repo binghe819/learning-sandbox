@@ -49,4 +49,43 @@ public class Order {
         this.delivery = delivery;
         delivery.setOrder(this);
     }
+
+    /**
+     * 새로운 주문 생성 (팩토리 메서드)
+     */
+    public static Order of(Member member, Delivery delivery, OrderItem... orderItems) {
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for (OrderItem orderItem : orderItems) {
+            order.addOrderItem(orderItem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        return order;
+    }
+
+    /**
+     * 주문 취소
+     */
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMPLETED) {
+            throw new IllegalStateException("이미 배송완료됨 취소 불가");
+        }
+        this.setStatus(OrderStatus.CANCEL);
+        for (OrderItem orderItem : orderItems) {
+            orderItem.cancel(); // 재고 수량 원복
+        }
+    }
+
+    /**
+     * 전체 주문 가격 조회
+     */
+    public int getTotalPrice() {
+        int totalPrice = 0;
+        for (OrderItem orderItem : orderItems) {
+            totalPrice += orderItem.getTotalPrice();
+        }
+        return totalPrice;
+    }
 }

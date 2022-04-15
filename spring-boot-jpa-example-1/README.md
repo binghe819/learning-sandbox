@@ -111,5 +111,27 @@ class org.hibernate.collection.internal.PersistentBag
 
 <br>
 
+## 주문 도메인
+* 복잡하게 엮어있는 엔티티도 해당 엔티티를 영속화시키기위한 정보들을 하나하나 만들어가면 된다.
+  * ex. 주문 1 --- N 주문상품 N --- 1 상품 (주문 N : N 상품)
+    * 주문을 생성한다고 가정한다면 -> 상품을 먼저 생성하여 영속화시키고, 주문상품을 영속화한다. (이때 주문에 대한 내용은 null로 둔다.)
+    * 마지막으로 주문을 영속화한다.
+* CASCADE는 어디까지 설정해야하는가?
+  * 만약 다른 엔티티에서 해당 엔티티를 참조하지 않는다면 `ALL`로 해도 된다.
+    * 즉, 생명주기가 하나의 엔티티로만 처리된다면 `ALL`로 두고 그게 아니라면 상황에 따라 범위를 좁혀가게 설정한다.
+  * 만약 다른 엔티티에서도 해당 엔티티를 참조한다면 CASCADE를 사용하지 않거나, 범위를 작게 하는 것이 좋다.
+* 도메인 모델 패턴
+  * 엔티티가 비즈니스 로직을 가지고 객체 지향의 특성을 적극 활용하여 비즈니스 로직을 구성하는 것을 [도메인 모델 패턴](https://martinfowler.com/eaaCatalog/domainModel.html)이라 부른다.
+  * 반대로 서비스 계층에 대부분의 비즈니스 로직을 처리하는 것을 [트랜잭션 스크립트 패턴](https://martinfowler.com/eaaCatalog/transactionScript.html)이라 부른다.
+* 동적 쿼리 처리방법
+  * 동적 쿼리를 사용하는 방법은 여러가지다. 다만 궁극적인 해결방안은 QueryDSL이다. [코드](./src/main/java/com/binghe/springbootjpaexample1/shoppin_mall/repository/OrderRepository.java)참고
+  * 방법 1 - JPQL (String) -> Bad Practice
+  * 방법 2 - Criteria -> Bad Practice
+  * 방법 3 - QueryDsl
+
+
+
+
+
 
 

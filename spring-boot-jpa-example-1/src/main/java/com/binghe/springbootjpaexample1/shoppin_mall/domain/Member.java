@@ -23,4 +23,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Order> orders = new ArrayList<>();
+
+    public Member(String name, Address address) {
+        this.name = name;
+        this.address = address;
+    }
 }
