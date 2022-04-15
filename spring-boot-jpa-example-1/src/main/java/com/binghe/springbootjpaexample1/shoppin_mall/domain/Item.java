@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
+@Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -26,4 +26,15 @@ public abstract class Item {
     private int price;
 
     private int stockQuantity;
+
+    public void addStock(int quantity) {
+        this.stockQuantity += quantity;
+    }
+
+    public void removeStock(int quantity) {
+        if (this.stockQuantity - quantity < 0) {
+            throw new IllegalStateException("재고는 0보다 작을 수 없다.");
+        }
+        this.stockQuantity -= quantity;
+    }
 }
