@@ -127,7 +127,11 @@ class org.hibernate.collection.internal.PersistentBag
   * 동적 쿼리를 사용하는 방법은 여러가지다. 다만 궁극적인 해결방안은 QueryDSL이다. [코드](./src/main/java/com/binghe/springbootjpaexample1/shoppin_mall/repository/OrderRepository.java)참고
   * 방법 1 - JPQL (String) -> Bad Practice
   * 방법 2 - Criteria -> Bad Practice
-  * 방법 3 - QueryDsl
+  * 방법 3 - QueryDsl - Best Practice
+
+<br>
+
+# 웹 계층 개발
 
 
 
