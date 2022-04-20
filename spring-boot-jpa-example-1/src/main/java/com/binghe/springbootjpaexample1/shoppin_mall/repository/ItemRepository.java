@@ -20,7 +20,8 @@ public class ItemRepository {
         if (Objects.isNull(item.getId())) {
             entityManager.persist(item);
         }
-        entityManager.merge(item); // update와 같은 역할
+        entityManager.merge(item); // update와 같은 역할 (item을 영속화하지 않고, 새로운 item을 만들어 영속화한다음 반환한다.)
+//        Item merge = entityManager.merge(item);
     }
 
     public Item findById(Long id) {
