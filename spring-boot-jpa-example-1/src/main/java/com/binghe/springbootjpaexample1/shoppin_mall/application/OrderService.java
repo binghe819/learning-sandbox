@@ -4,10 +4,12 @@ import com.binghe.springbootjpaexample1.shoppin_mall.domain.*;
 import com.binghe.springbootjpaexample1.shoppin_mall.repository.ItemRepository;
 import com.binghe.springbootjpaexample1.shoppin_mall.repository.MemberRepository;
 import com.binghe.springbootjpaexample1.shoppin_mall.repository.OrderRepository;
+import com.binghe.springbootjpaexample1.shoppin_mall.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -61,9 +63,16 @@ public class OrderService {
         order.cancel();
     }
 
+    public List<Order> findAll() {
+        return orderRepository.findAll();
+    }
+
     /**
      * 검색
      */
-
-
+    public List<Order> findOrders(OrderSearch orderSearch) {
+        //        return orderRepository.findByOrderSearch(orderSearch);
+        return orderRepository.findByOrderSearchBadPractice(orderSearch);
+        //        return orderRepository.findByOrderSearchBadPractice2(orderSearch);
+    }
 }

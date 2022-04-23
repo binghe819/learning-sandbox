@@ -2,6 +2,8 @@ package com.binghe.springbootjpaexample1.shoppin_mall.repository;
 
 import com.binghe.springbootjpaexample1.shoppin_mall.domain.Member;
 import com.binghe.springbootjpaexample1.shoppin_mall.domain.Order;
+import com.binghe.springbootjpaexample1.shoppin_mall.domain.OrderStatus;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -35,6 +37,11 @@ public class OrderRepository {
         return entityManager.createQuery("select o from Order o where o.status = :status and o.member.name = :member", Order.class)
                 .setParameter("status", orderSearch.getOrderStatus())
                 .setParameter("member", orderSearch.getMemberName())
+                .getResultList();
+    }
+
+    public List<Order> findAll() {
+        return entityManager.createQuery("select o from Order o", Order.class)
                 .getResultList();
     }
 
@@ -109,4 +116,5 @@ public class OrderRepository {
         TypedQuery<Order> query = entityManager.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList();
     }
+
 }
