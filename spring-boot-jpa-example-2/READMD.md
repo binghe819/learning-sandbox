@@ -61,7 +61,7 @@ static class Result<T> {
 
 <br>
 
-## 지연로딩과 조회 성능 최적화
+## 지연로딩과 조회 성능 최적화 (Many To One, One To One)
 주문 + 배송정보 + 회원을 조회하는 REST API를 만들어본다.
 
 > 조회시 지연 로딩으로 인한 성능 문제를 단계적으로 해결한다고 보면 된다. 
@@ -236,6 +236,94 @@ class OrderRepository {
 위와 같이 fetch join을 사용하면 Order를 가져올 때 Member와 Delivery를 하나의 쿼리로 가져온다. (쿼리 1번 날라간 것)
 
 <br>
+
+### 네번째 개선 - JPA에서 DTO로 바로 조회
+Fetch Join으로도 조회에 대한 대부분의 문제는 해결할 수 있다.
+
+다만 더 최적화를 시키기위해선 특정 요청에 필요없는 데이터까지 가져오지 않도록 하는 것이다.
+
+즉, 엔티티를 조회해서 DTO로 변환하는 것이 아니라, 바로 DTO의 상태에 있는 데이터만을 바로 가져오는 것이다.
+
+<br>
+
+> OrderSimpleApiController.java
+```java
+/**
+ * 세번째 개선 - DTO로 바로 가져오기 (원하는 상태만 조회 -> 원하는 값만 SELECT)
+ */
+@GetMapping("/api/v4/simple-orders")
+public List<OrderSimpleQueryDto> ordersV4() {
+    return orderRepository.findOrderDtos();
+}
+```
+
+> OrderSimpleQueryDto.java
+```java
+@Data
+public class OrderSimpleQueryDto {
+
+    private Long orderId;
+    private String name;
+    private LocalDateTime orderDate;
+    private OrderStatus orderStatus;
+    private Address address;
+
+    public OrderSimpleQueryDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus, Address address) {
+        this.orderId = orderId;
+        this.name = name;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
+        this.address = address;
+    }
+}
+```
+
+> OrderRepository.java
+```java
+class OrderRepository {
+    ...
+
+    public List<OrderSimpleQueryDto> findOrderDtos() {
+      return entityManager.createQuery(
+              "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                      " from Order o" +
+                      " join o.member m" +
+                      " join o.delivery d",
+              OrderSimpleQueryDto.class
+      ).getResultList();
+    }
+    
+    ...
+}
+```
+
+위 API를 실행하면 쿼리가 조금 짧아진다. 그 이유는 DTO에 존재하는 원하는 상태만을 SELECT해서 가져오기 때문이다.
+
+이를 통해 **네트워크적 비용을 조금 줄일 수 있다. - 장점**
+
+다만, **V3에서의 엔티티를 조회하는 것보다 재사용성 측면에서 굉장히 비효율적이다. - 단점**
+
+즉, 각각의 API별로 Repository에 JPQL로 쿼리를 작성해야되는 문제가 있다.
+
+다시 말해, **Repository의 메서드가 표현 계층에 의존하고 있는 것이다. 이는 논리적으로 계층 구조가 깨지는 문제가 있다.**
+
+> 필자의 경우는 보통 V3로 코드를 작성한다. (요청마다 DTO에 맞게 쿼리를 작성하는 것은 유지보수나 확장성 방면에서 너무 취약하다.)
+
+<br>
+
+### 쿼리 방식 선택 권장 순서 (결론)
+1. 우선 엔티티를 DTO로 변환하는 방법을 선택한다.
+2. 필요하면 Fetch Join으로 성능을 최적화 한다. -> 대부분의 성능 이슈가 해결된다.
+3. 그래도 안되면 DTO로 직접 조회하는 방법을 사용한다.
+4. 최후의 방법은 JPA가 제공하는 네이티브 SQL이나 스프링 JDBC Template을 사용해서 SQL을 직접 사용한다. (요청에 맞는 최적의 쿼리를 작성하는 것.)
+   * 이때 쿼리용 패키지를 따로 두는 편이 유지보수성 측면에서 용이하다. (ex. `OrderSimpleQueryRepository`)
+   * 엔티티에 의존적인 쿼리 (기존의 JPA 조회)와 표현계층에 의존적인 쿼리를 클래스 분리 시키는 것.
+     * 엔티티에 의존적인 쿼리는 재사용 가능.
+     * 표현계층에 의존적인 쿼리는 재사용 불가능.
+
+<br>
+
+## 컬렉션 조회 최적화 (One To Many, Many To Many)
 
 
 

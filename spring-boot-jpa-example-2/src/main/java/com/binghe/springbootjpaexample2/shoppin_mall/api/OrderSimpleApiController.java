@@ -5,6 +5,7 @@ import com.binghe.springbootjpaexample2.shoppin_mall.domain.Order;
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderStatus;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderRepository;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSearch;
+import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSimpleQueryDto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Or;
@@ -64,6 +65,14 @@ public class OrderSimpleApiController {
         return orders.stream()
                 .map(SimpleOrderDto::new)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 세번째 개선 - DTO로 바로 가져오기 (원하는 상태만 조회 -> 원하는 값만 SELECT)
+     */
+    @GetMapping("/api/v4/simple-orders")
+    public List<OrderSimpleQueryDto> ordersV4() {
+        return orderRepository.findOrderDtos();
     }
 
     @Data

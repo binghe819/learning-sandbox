@@ -123,4 +123,14 @@ public class OrderRepository {
                 Order.class
         ).getResultList();
     }
+
+    public List<OrderSimpleQueryDto> findOrderDtos() {
+        return entityManager.createQuery(
+                    "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+                            " from Order o" +
+                            " join o.member m" +
+                            " join o.delivery d",
+                    OrderSimpleQueryDto.class
+            ).getResultList();
+    }
 }
