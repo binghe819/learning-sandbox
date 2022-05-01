@@ -1,13 +1,19 @@
 package com.binghe.springbootjpaexample2.shoppin_mall.api;
 
+import com.binghe.springbootjpaexample2.shoppin_mall.domain.Address;
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.Order;
+import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderStatus;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderRepository;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSearch;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * ----- ManyToOne, OneToOne 관계 성능 최적화 -----
@@ -36,5 +42,44 @@ public class OrderSimpleApiController {
             order.getDelivery().getAddress();
         }
         return all;
+    }
+
+    /**
+     * 첫번째 개선 - 엔티티를 DTO로 변환
+     */
+    @GetMapping("/api/v2/simple-orders")
+    public List<SimpleOrderDto> ordersV2() {
+        List<Order> orders = orderRepository.findByOrderSearchBadPractice(new OrderSearch());
+        return orders.stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 두번째 개선 - fetch join
+     */
+    @GetMapping("/api/v3/simple-orders")
+    public List<SimpleOrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithMemberAndDelivery();
+        return orders.stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Data
+    static class SimpleOrderDto {
+        private Long orderId;
+        private String name;
+        private LocalDateTime orderDate;
+        private OrderStatus orderStatus;
+        private Address address;
+
+        public SimpleOrderDto(Order order) {
+            this.orderId = order.getId();
+            this.name = order.getMember().getName();
+            this.orderDate = order.getOrderDate();
+            this.orderStatus = order.getStatus();
+            this.address = order.getDelivery().getAddress();
+        }
     }
 }
