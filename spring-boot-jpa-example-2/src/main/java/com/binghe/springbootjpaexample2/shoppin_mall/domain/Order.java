@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter @Setter
 @Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 @Table(name = "orders")
 public class Order {
