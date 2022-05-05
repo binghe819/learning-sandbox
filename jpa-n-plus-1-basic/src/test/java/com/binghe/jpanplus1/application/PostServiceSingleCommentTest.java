@@ -41,6 +41,7 @@ class PostServiceSingleCommentTest {
     void setUp() {
         User user = userRepository.save(User.builder().name("빙허").build());
 
+        // 테스트 픽스처 - 10개의 Post 생성. 각 Post마다 1개의 Comment (Post 1 : 1 Comment)
         for (int i = 0; i < 10; i++) {
             Post post = Post.builder()
                 .title("N + 1 문제" + i)
@@ -61,6 +62,7 @@ class PostServiceSingleCommentTest {
         List<String> allCommentContents = postService.findAllCommentContents();
 
         assertThat(allCommentContents).hasSize(10);
+        printAllComments(allCommentContents);
 
         assertThat(queryCounter.getCount().getValue()).isEqualTo(11);
         printQueryCount();
@@ -74,6 +76,8 @@ class PostServiceSingleCommentTest {
         List<String> allCommentContents = postService.findAllCommentContentsByFetchJoin();
 
         assertThat(allCommentContents).hasSize(10);
+        printAllComments(allCommentContents);
+
         assertThat(queryCounter.getCount().getValue()).isEqualTo(1);
         printQueryCount();
     }
@@ -93,5 +97,9 @@ class PostServiceSingleCommentTest {
     private void printQueryCount() {
         System.out.println("##### 총 쿼리 개수 : " + queryCounter.getCount().getValue());
         queryCounter.endCount();
+    }
+
+    private void printAllComments(List<String> comments) {
+        comments.forEach(System.out::println);
     }
 }

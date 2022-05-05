@@ -40,6 +40,8 @@ public class PostServiceMultiCommentTest {
 
     @BeforeEach
     void setUp() {
+
+        // 테스트 픽스처 - 10개의 Post 생성. 각 Post마다 2개의 Comment (Post 1 : N Comment)
         for (int i = 0; i < 10; i++) {
             User user = userRepository.save(User.builder().name("빙허" + i).build());
 
@@ -65,6 +67,8 @@ public class PostServiceMultiCommentTest {
         assertThat(allCommentContents.size()).isNotEqualTo(20); // 20을 예상하지만 뻥튀기되어 40개가 나온다
         assertThat(allCommentContents).hasSize(40);
         assertThat(allCommentContents.get(0)).isSameAs(allCommentContents.get(2)); // 동일한 주소를 가리키는 객체
+        printAllComments(allCommentContents);
+
         assertThat(queryCounter.getCount().getValue()).isEqualTo(1);
         printQueryCount();
     }
@@ -77,6 +81,8 @@ public class PostServiceMultiCommentTest {
         List<String> allCommentContents = postService.findAllCommentContentsByFetchJoinDistinct();
 
         assertThat(allCommentContents).hasSize(20);
+        printAllComments(allCommentContents);
+
         assertThat(queryCounter.getCount().getValue()).isEqualTo(1);
         printQueryCount();
     }
@@ -89,6 +95,8 @@ public class PostServiceMultiCommentTest {
         List<String> allCommentContents = postService.findAllCommentContentsByEntityGraphDistinct();
 
         assertThat(allCommentContents).hasSize(20);
+        printAllComments(allCommentContents);
+
         assertThat(queryCounter.getCount().getValue()).isEqualTo(1);
         printQueryCount();
     }
@@ -121,5 +129,9 @@ public class PostServiceMultiCommentTest {
     private void printQueryCount() {
         System.out.println("##### 총 쿼리 개수 : " + queryCounter.getCount().getValue());
         queryCounter.endCount();
+    }
+
+    private void printAllComments(List<String> comments) {
+        comments.forEach(System.out::println);
     }
 }

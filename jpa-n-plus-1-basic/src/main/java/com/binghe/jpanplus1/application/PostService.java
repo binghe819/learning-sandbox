@@ -3,6 +3,8 @@ package com.binghe.jpanplus1.application;
 import com.binghe.jpanplus1.domain.Comment;
 import com.binghe.jpanplus1.domain.Post;
 import com.binghe.jpanplus1.domain.PostRepository;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +45,12 @@ public class PostService {
 
     private List<String> extractCommentContents(List<Post> posts) {
         return posts.stream()
-            .flatMap(post -> post.getComments().stream().map(Comment::getContent))
-            .collect(Collectors.toList());
+                .map(Post::getComments)
+                .flatMap(Collection::stream)
+                .map(Comment::getContent)
+                .collect(Collectors.toList());
+//        return posts.stream()
+//            .flatMap(post -> post.getComments().stream().map(Comment::getContent))
+//            .collect(Collectors.toList());
     }
 }
