@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    generate-ddl: false
+    hibernate:
+      ddl-auto: create-drop
+  datasource:
+    #    url: jdbc:h2:tcp://localhost/~/Desktop/Code/jpashop
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
