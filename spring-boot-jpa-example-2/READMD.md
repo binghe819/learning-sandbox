@@ -68,7 +68,7 @@ static class Result<T> {
 
 <br>
 
-### 첫번째. BAD Practice - 엔티티 직접 노출 (무한루프에 빠지게 됨)
+### 첫번째 BAD Practice - 엔티티 직접 노출 (무한루프에 빠지게 됨)
 아래 예시는 모든 주문 정보를 조회하는 API를 엔티티를 반환하도록 구현한 것이다.
 
 > OrderSimpleApiController.java
@@ -151,7 +151,7 @@ Order를 가져와서 JSON화를 할 때, 모든 상태에 대해서 `getter`를
 
 <br>
 
-### 두번째 개선 - 엔티티를 DTO로 변환 (N + 1 문제 발생)
+### 두번째 개선하기 - 엔티티를 DTO로 변환 (N + 1 문제 발생)
 
 > OrderSimpleApiController.java
 ```java
@@ -200,7 +200,7 @@ static class SimpleOrderDto {
 
 <br>
 
-### 세번째 개선 - Fetch Join 최적화 (N + 1 해결)
+### 세번째 개선하기 - Fetch Join 최적화 (N + 1 해결)
 > OrderSimpleApiController.java
 ```java
 /**
@@ -237,7 +237,7 @@ class OrderRepository {
 
 <br>
 
-### 네번째 개선 - JPA에서 DTO로 바로 조회
+### 네번째 개선하기 - JPA에서 DTO로 바로 조회
 Fetch Join으로도 조회에 대한 대부분의 문제는 해결할 수 있다.
 
 다만 더 최적화를 시키기위해선 특정 요청에 필요없는 데이터까지 가져오지 않도록 하는 것이다.
@@ -324,6 +324,185 @@ class OrderRepository {
 <br>
 
 ## 컬렉션 조회 최적화 (One To Many, Many To Many)
+위에선 xxxToOne (Many To One, One to One) 관계에서의 Fetch join만을 다뤘다.
+
+toOne 관계에서는 사실 Fetch Join만으로 쉽게 문제를 해결할 수 있다.
+
+이번엔 컬렉션 조회를 의미하는 xxxToMany (One To Many, Many To Many)관계의 조회를 다룬다.
+
+<br>
+
+**예시 - 주문내역에서 추가로 주문한 상품 정보를 조회해본다.**
+
+* `Order` 기준으로 컬렉션인 `OrderItem`과 `Item`이 필요하다.
+  * `Order N : N Item` 관계라고 보면 된다.
+
+<br>
+
+### 첫번째 Bad Practice - 엔티티 직접 노출
+이전에도 살펴보았듯이, 엔티티를 표현 계층에 그대로 노출하는 것은 좋지 않다.
+
+```java
+@GetMapping("/api/v1/orders")
+public List<Order> ordersV1() {
+    List<Order> all = orderRepository.findAll();
+    // Order의 지연 로딩된 상태 초기화
+    for (Order order : all) {
+        order.getMember().getName();
+        order.getDelivery().getAddress();
+        List<OrderItem> orderItems = order.getOrderItems();
+        for (OrderItem orderItem : orderItems) {
+            orderItem.getItem().getName();
+        }
+    }
+    return all;
+}
+```
+* 위 코드가 잘 동작하기 위해선 아래 설정을 해주어야한다.
+  * Hibernate5Module 모듈 등록 -> LAZY = null 처리
+  * Jackson에서 getter를 호출하기 때문에 양방향 관계 문제가 발생한다. 그러므로 모든 호출되는 관계에서 `@JsonIgnore`설정을 해주어야한다.
+* **위 방식은 도메인을 그대로 노출하는 것이기때문에 그냥 사용하지 않는 것이 좋다.**
+
+<br>
+
+### 두번째 개선 - 엔티티를 DTO로 변환
+이번에도 동일하게 엔티티를 DTO로 만들어서 반환해본다.
+
+```java
+@GetMapping("/api/v2/orders")
+public List<OrderDto> ordersV2() {
+    List<Order> all = orderRepository.findAll();
+    return all.stream()
+            .map(OrderDto::new)
+            .collect(toList());
+}
+
+@Data
+static class OrderDto {
+
+    private Long orderId;
+    private String name;
+    private LocalDateTime orderDate; //주문시간
+    private OrderStatus orderStatus;
+    private Address address;
+    private List<OrderItemDto> orderItems;
+
+    public OrderDto(Order order) {
+        orderId = order.getId();
+        name = order.getMember().getName();
+        orderDate = order.getOrderDate();
+        orderStatus = order.getStatus();
+        address = order.getDelivery().getAddress();
+        // 지연 로딩된 부분을 직접 호출하여 채워주는 코드.
+        orderItems = order.getOrderItems().stream()
+                .map(OrderItemDto::new)
+                .collect(toList());
+    }
+}
+
+@Data
+static class OrderItemDto {
+
+    private String itemName;//상품 명
+    private int orderPrice; //주문 가격
+    private int count;      //주문 수량
+
+    public OrderItemDto(OrderItem orderItem) {
+        itemName = orderItem.getItem().getName();
+        orderPrice = orderItem.getOrderPrice();
+        count = orderItem.getCount();
+    }
+}
+```
+* 문제점 - 지연로딩으로 인해 `N + 1` 문제 발생 (쿼리가 끔찍하게 많이 나가게된다)
+  * `OrderDto`에서 `orderItems`를 초기화하는 부분을 보면 직접 전부 호출해서 데이터를 가져오는 부분이 있다.
+  * 이때 `OrderItem`별로 쿼리를 한번씩 날리기때문에 `N + 1` 문제가 발생한다.
+  * Order 목록 1번 + Order 목록마다 (Member 조회 1번 + Delivery 조회 1번 + orderItem 목록 1번 + orderItem과 관계를 맺은 Item별 1번씩)
+
+<br>
+
+> 주의할 점!! -> DTO안에 엔티티를 가지도록하면 안된다. DTO는 DTO끼리만 관계를 맺어야한다. (엔티티가 표현계층에 노출되기 때문!)
+
+<br>
+
+### 세번째 개선 - Fetch Join을 통한 최적화
+`N + 1` 문제를 해결하기 위해 Fetch Join을 사용해본다.
+
+> OrderApiController.java
+
+```java
+@GetMapping("/api/v3/orders")
+public List<OrderDto> ordersV3() {
+    List<Order> all = orderRepository.findAllWithItem();
+    return all.stream()
+            .map(OrderDto::new)
+            .collect(toList());
+}
+```
+
+> OrderRepository.java
+
+```java
+public List<Order> findAllWithItem() {
+    return entityManager.createQuery(
+            "select distinct o from Order o" +
+                    " join fetch o.member m" +
+                    " join fetch o.delivery d" +
+                    " join fetch o.orderItems oi" +
+                    " join fetch oi.item i", Order.class
+    ).getResultList();
+}
+```
+* Fetch Join으로 인해 1번의 쿼리만으로 원하는 정보를 가져올 수 있다.
+* distinct를 사용한 이유
+  * 데이터 뻥튀기 문제를 해결하기위해 사용한 것.
+  * 1:N 관계에서 DB 입장에서 N 개수만큼 뻥튀기가 된다.
+  * JPA의 distinct는 SQL에 distinct를 추가해주고, 애플리케이션에서 엔티티의 중복도 제거해준다.
+* 위 쿼리에 두 가지 문제점이 존재한다.
+  1. 컬렉션 페치 조인과 페이징 -> 즉, 위 쿼리는 페이징이 불가능하다.
+  2. 컬렉션 페치 조인은 1개만 사용할 수 있다. -> 즉, 위 쿼리는 데이터 부정합이 발생할 확률이 높다.
+
+<br>
+
+**컬렉션 페치 조인과 페이징**
+
+만약 컬렉션 패치 조인을 한 상태에서 페이징을 사용할 경우 어떻게 될까?
+
+아래와 같이 임시로 OrderRepository에 100개의 Order를 가져오는 페이징 쿼리를 넣어본다.
+
+> OrderRepository.java
+```java
+public List<Order> findAllWithItem() {
+    // 컬렉션 패치 조인 + 페이징 테스트용
+    return entityManager.createQuery(
+            "select distinct o from Order o" +
+                    " join fetch o.member m" +
+                    " join fetch o.delivery d" +
+                    " join fetch o.orderItems oi" +
+                    " join fetch oi.item i", Order.class)
+            .setFirstResult(1)
+            .setMaxResults(100)
+            .getResultList();
+}
+```
+* **결과적으로 페이징이 불가능하다.**
+  * **쿼리를 날린 로그를 잘 살펴보면 limit과 offset이 전혀 걸리지 않는다.**
+  * **컬렉션 패치 조인을 사용하면 페이징이 불가능하다. 실제 페이징 쿼리 자체가 날라가지 않는다.** 
+  * **만약 페이징을 한다면 Hibernate에서 경고 로그를 남기면서 모든 데이터를 DB에서 읽어오고, 메모리에서 페이징 해버린다.** (매우 위험하다.)
+* 페이징이 불가능한 이유는 간단하다.
+  * **1:N 관계에서 컬렉션 패치 조인의 경우 DB의 결과가 N의 개수만큼 돌아오게된다. 1에 해당하는 엔티티가 데이터 뻥튀기가 발생하기때문에 어디까지가 해당 엔티티의 끝인지 알 수 없다.**
+  * 그러기때문에 JPA는 모든 데이터를 다 가져와서 distinct를 진행하여 데이터 뻥튀기를 해결하고 페이징 처리를 진행하는 것이다. -> 문제는 애플리케이션 메모리에 1에 해당하는 엔티티의 모든 데이터를 가져온다는 것...
+  * 즉, **데이터 뻥튀기로 인해 페이징에 대한 정확한 기준이 잡히지 않아 페이징이 불가능한 것.**
+
+<br>
+
+**컬렉션 페치 조인은 1개만 사용할 수 있다.**
+
+* 컬렉션 둘 이상에 페치 조인을 사용하면 안된다.
+  * **그 이유는 데이터 뻥튀기로 인해 데이터 부정합이 발생할 수 있기 때문이다.**
+  * 실제로 1 : N 에서 페치 조인을 사용해도 데이터 뻥튀기가 발생하는데... 1 : N 관계에서 여러번 페치 조인을 사용하면 페치 조인을 실행한만큼 데이터 뻥튀기가 발생한다. (데이터 폭발..)
+
+<br>
 
 
 

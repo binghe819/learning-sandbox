@@ -133,4 +133,24 @@ public class OrderRepository {
                     OrderSimpleQueryDto.class
             ).getResultList();
     }
+
+    public List<Order> findAllWithItem() {
+//        return entityManager.createQuery(
+//                "select distinct o from Order o" +
+//                        " join fetch o.member m" +
+//                        " join fetch o.delivery d" +
+//                        " join fetch o.orderItems oi" +
+//                        " join fetch oi.item i", Order.class)
+//                .getResultList();
+        // 컬렉션 패치 조인 + 페이징 테스트용
+        return entityManager.createQuery(
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100)
+                .getResultList();
+    }
 }
