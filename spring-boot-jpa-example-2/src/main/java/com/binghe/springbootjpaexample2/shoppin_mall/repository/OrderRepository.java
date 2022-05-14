@@ -153,4 +153,16 @@ public class OrderRepository {
                 .setMaxResults(100)
                 .getResultList();
     }
+
+    public List<Order> findallWithMemberDelivery(int offset, int limit) {
+        return entityManager.createQuery(
+                "select distinct o from Order o" +
+                        " join fetch o.member m" + // ToOne 관계이므로 Fetch Join해도 상관 없음
+                        " join fetch o.delivery d", // ToOne 관계이므로 Fetch Join해도 상관 없음
+                        Order.class
+                )
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }

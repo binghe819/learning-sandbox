@@ -489,6 +489,7 @@ public List<Order> findAllWithItem() {
   * **쿼리를 날린 로그를 잘 살펴보면 limit과 offset이 전혀 걸리지 않는다.**
   * **컬렉션 패치 조인을 사용하면 페이징이 불가능하다. 실제 페이징 쿼리 자체가 날라가지 않는다.** 
   * **만약 페이징을 한다면 Hibernate에서 경고 로그를 남기면서 모든 데이터를 DB에서 읽어오고, 메모리에서 페이징 해버린다.** (매우 위험하다.)
+  * 위 예시에서는 `Order 1 : N OrderItem`에서 1에 해당하는 `Order` 기준으로 페이징을 하고싶지만, DB의 특성상 N에 해당하는 `OrderItem` 기준으로 row가 생성되기때문에 원치 않는 `OrderItem` 기준으로 페이징이 걸리게 된다. (잘못된 결과) 
 * 페이징이 불가능한 이유는 간단하다.
   * **1:N 관계에서 컬렉션 패치 조인의 경우 DB의 결과가 N의 개수만큼 돌아오게된다. 1에 해당하는 엔티티가 데이터 뻥튀기가 발생하기때문에 어디까지가 해당 엔티티의 끝인지 알 수 없다.**
   * 그러기때문에 JPA는 모든 데이터를 다 가져와서 distinct를 진행하여 데이터 뻥튀기를 해결하고 페이징 처리를 진행하는 것이다. -> 문제는 애플리케이션 메모리에 1에 해당하는 엔티티의 모든 데이터를 가져온다는 것...
@@ -504,6 +505,108 @@ public List<Order> findAllWithItem() {
 
 <br>
 
+### 네번째 개선 - 엔티티를 DTO로 변환 (컬렉션 Fetch Join의 페이징과 한계 해결 - Batch Size)
+이번엔 위에서 언급했던 두 가지 컬렉션 Fetch Join의 해결방법이 대해서 다룬다.
 
+1. 컬렉션을 Fetch Join하면 페이징이 불가능하다.
+2. 컬렉션 Fetch Join은 1개만 사용할 수 있다. (두 개이상 사용시 데이터 부정합이 발생할 수 있음)
+
+<br>
+
+**위 두 문제의 해결법은 Batch Size를 사용하는 것이다. - 중요**
+
+* 먼저 `ToOne` 관계는 모두 Fetch Join을 사용한다.
+  * `ToOne` 관계는 row수가 증가하지 않기때문에 페이징 쿼리에 영향이 전혀 없다.
+* 컬렉션은 지연 로딩으로 조회한다.
+* 지연 로딩 성능 최적화를 위해 `hibernate.default_batch_fetch_size`, `@BatchSize`를 적용한다.
+  * `hibernate.default_batch_fetch_size`: 글로벌 설정
+  * `@BatchSize`: 개별 최적화
+  * 이 옵션을 사용하면 컬렉션이나, 프록시 객체를 한꺼번에 설정한 Size 만큼 IN 쿼리로 조회하여 가져온다.
+
+<br>
+
+**예시 - Batch Size를 사용하지 않는다면**
+
+> OrderRepository.java
+```java
+public List<Order> findallWithMemberDelivery(int offset, int limit) {
+    return entityManager.createQuery(
+    "select distinct o from Order o" +
+    " join fetch o.member m" + // ToOne 관계이므로 Fetch Join해도 상관 없음
+    " join fetch o.delivery d", // ToOne 관계이므로 Fetch Join해도 상관 없음
+    Order.class)
+          .setFirstResult(offset)
+          .setMaxResults(limit)
+          .getResultList();
+}
+```
+
+> OrderApiController.java
+```java
+@GetMapping("/api/v3.1/orders")
+public List<OrderDto> orderV3_paging(
+        @RequestParam(value = "offset", defaultValue = "0") int offset,
+        @RequestParam(value = "limit", defaultValue = "100") int limit
+) {
+    List<Order> orders = orderRepository.findallWithMemberDelivery(offset, limit);
+
+    return orders
+            .stream()
+            .map(OrderDto::new)
+            .collect(toList());
+}
+```
+위 코드의 문제는 아래와 같다.
+
+<p align="center"><img src="./image/example_result.png"> </p>
+
+* 총 7번의 쿼리가 날아간다. (Order 조회 1번 + OrderItem (1번 + 각각의 Item수 2번씩))
+* 많은 데이터가 존재하는 상태에서 페이지의 수(offset)을 높게 입력하면 모든 데이터를 DB에서 읽어오고, 메모리에서 페이징 해버린다 (경고도 나오게 된다.)
+
+<br>
+
+**예시 - BatchSize를 사용한다면**
+
+> application.yml
+```yml
+spring:
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+```
+
+위와 같이 Batch Size를 글로벌로 설정하고 쿼리를 날려보면 결과는 아래와 같다.
+
+* 총 3번의 쿼리만 날아간다. (Order 조회 1번 + OrderItem 1번 + Item 1번)
+  * 지연 로딩된 컬렉션을 모두 IN 절로 한번에 조회한다.
+* Order 기준으로 데이터를 가져온 다음에, IN절로 지연로딩된 부분을 가져오기 때문에 페이징이 제대로 동작한다. (문제의 메모리 페이징이 더이상 발생하지 않음.)
+
+<br>
+
+**결론 - 중요**
+
+* 장점
+  * 쿼리 수가 `1 + N` -> `1 + 1`로 최적화된다.
+  * Fetch Join보다 DB 데이터 전송량이 최적화된다. (`Order 1 : N OrderItem` 관계에서 DB 특성상 Order가 OrderItem만큼 중복해서 조회되기 때문에 데이터 중복 문제가 발생한다.)
+  * Fetch Join 방식과 비교해서 쿼리 호출 수가 약간 증가할 수 있지만, DB 데이터 전송량은 감소한다.
+  * **컬렉션 Fetch Join은 페이징이 불가능 하지만 이 방법은 페이징이 가능하다.**
+* 결론
+  * `ToOne` 관계는 Fetch Join해도 페이징에 영향을 줄 수 없다. 따라서 `ToOne` 관계는 Fetch Join으로 쿼리 수를 줄이면 된다.
+  * `ToMany`의 컬렉션 Fetch Join의 경우 BatchSize로 해결하자.
+
+<br>
+
+**참고 - 중요**
+
+* BatchSize 크기는 100 ~ 1000 사이를 권장한다.
+  * DB의 따라서 IN절을 1000개로 제한하는 경우도 있다고 한다. (확인후 설정해야함.)
+* 크기의 따른 장단점
+  * BatchSize가 작으면 (ex. 10) -> 쿼리가 자주 날아간다.
+  * BatchSize가 크면 (ex. 1000) -> DB와 애플리케이션의 순간 부하가 증가한다.
+* BatchSize에 따른 애플리케이션의 메모리 사용량은 어차피 같다.
+  * 한 트랜잭션 안에서 모두 가져와 사용하기 때문이다.
+  * OOM가 발생하는 이유가 BatchSize 크기와는 무관하다는 의미.
+* DB와 애플리케이션이 순간 부하를 어느정도까지 견딜 수 있는지 판단하여 점진적으로 설정하는 것이 좋다. (정답은 없음)
 
 
