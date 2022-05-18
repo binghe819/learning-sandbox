@@ -6,6 +6,8 @@ import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderItem;
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderStatus;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderRepository;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSearch;
+import com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderQueryDto;
+import com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderQueryRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import static java.util.stream.Collectors.toList;
 public class OrderApiController {
 
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
     /**
      * 엔티티 직접 노출
@@ -70,6 +73,11 @@ public class OrderApiController {
                 .stream()
                 .map(OrderDto::new)
                 .collect(toList());
+    }
+
+    @GetMapping("/api/v4/orders")
+    public List<OrderQueryDto> ordersV4() {
+        return orderQueryRepository.findOrderQueryDtos();
     }
 
     @Data

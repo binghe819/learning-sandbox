@@ -285,7 +285,7 @@ class OrderRepository {
 
     public List<OrderSimpleQueryDto> findOrderDtos() {
       return entityManager.createQuery(
-              "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
+              "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.order.simplequery.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address) " +
                       " from Order o" +
                       " join o.member m" +
                       " join o.delivery d",
@@ -608,5 +608,210 @@ spring:
   * 한 트랜잭션 안에서 모두 가져와 사용하기 때문이다.
   * OOM가 발생하는 이유가 BatchSize 크기와는 무관하다는 의미.
 * DB와 애플리케이션이 순간 부하를 어느정도까지 견딜 수 있는지 판단하여 점진적으로 설정하는 것이 좋다. (정답은 없음)
+
+<br>
+
+### 다섯번째 개선 - DTO 직접 조회 (N + 1 발생)
+이제 조회용으로 엔티티를 조회하지 않고 바로 DTO를 조회하는 예시를 살펴본다.
+
+보통 현업에서 Repository도 크게 두 가지로 나뉜다.
+
+* `OrderRepository`: Order 엔티티 조회용 Repository
+* `OrderQuestRepository`: 특정 API에 종속된 조회용 Repository (특정 표현계층에 밀접한 관계를 가진 Repository)
+
+<br>
+
+**그렇다면 왜 DTO를 바로 조회할 까?**
+
+장점으로는 DB에서 원하는 컬럼의 값만 가져올 수 있어 네트워크 비용면에서 용이하다. 
+
+하지만 특정 API에 종속적인 Repository 코드가 작성되야하기때문에 재사용성면에선 취약하다.
+
+<br>
+
+간단히 DTO로 바로 조회하는 예시를 살펴본다.
+
+> OrderQueryRepository.java
+
+```java
+/**
+ * 컬렉션은 별도로 조회
+ * Query: 루트 목록 조회 1번, 컬렉션 N 번
+ * 단건 조회에서 많이 사용되는 방식
+ */
+public List<OrderQueryDto> findOrderQueryDtos() {
+    // 루트 목록 조회 (ToOne 코드를 모두 한번에 조회)
+    List<OrderQueryDto> result = findOrders(); // 쿼리 1번
+    
+    // 루프를 돌면서 컬렉션 추가 (추가 쿼리 실행) 쿼리 N번
+    result.forEach(o -> {
+    List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId());
+    o.setOrderItems(orderItems);
+    });
+    return result;
+}
+
+private List<OrderQueryDto> findOrders() {
+    return em.createQuery(
+    "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
+    " from Order o" +
+    " join o.member m" + // ToOne 관계이기때문에 데이터 뻥튀기가 발생하지 않음으로 join해줌.
+    " join o.delivery d", // ToOne 관계이기때문에 데이터 뻥튀기가 발생하지 않음으로 join해줌.
+    OrderQueryDto.class)
+    .getResultList();
+}
+
+private List<OrderItemQueryDto> findOrderItems(Long orderId) {
+    return em.createQuery(
+    "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+        " from OrderItem oi" +
+        " join oi.item i" + // ToOne 관계이기때문에 데이터 뻥튀기가 발생하지 않음으로 join해줌.
+        " where oi.order.id = :orderId", OrderItemQueryDto.class
+    ).setParameter("orderId", orderId).getResultList();
+}
+```
+
+> OrderApiController.java
+
+```java
+@GetMapping("/api/v4/orders")
+public List<OrderQueryDto> ordersV4() {
+    return orderQueryRepository.findOrderQueryDtos();
+}
+```
+* 쿼리 수
+  * Repository에서 엔티티가 아닌 DTO에 필요한 상태만 select해와서 반환해주는 것을 볼 수 있다.
+  * 쿼리는 루트 1번, 컬렉션 N 번 실행된다. (Orders 한번 + Order마다 OrderLineItem 한번씩)
+* ToOne과 ToMany의 조회 방식
+  * `ToOne`은 join을 사용해도 데이터 row 수가 증가하지 않는다. (N을 기준으로 증가하기 때문) 그러기 때문에 `ToOne` 관계에서는 join을 통해 쿼리 한방으로 가져오는 것이 좋다.
+  * `ToMany`는 join하면 row 수가 증가한다. 그러기 때문에 따로 쿼리를 날려 데이터를 조립해줘야한다.
+  * 즉, row 수가 증가하지 않는 `ToOne`은 join을 통해 최적화하고, `ToMany`는 최적화가 어렵기 때문에 `findOrderItems`와 같은 별도의 메서드로 조회한다.
+* 문제점
+  * 위 방식은 N + 1 문제가 그대로 재발한다.
+
+<br>
+
+### 여섯번째 개선 - DTO 직접 조회 (N + 1 해결 및 컬렉션 조회 최적화)
+
+
+<br>
+
+### 칠곱번째 개선 - DTO 직접 조회 (플랙 데이터 최적화)
+
+<br>
+
+## 컬렉션 조회 최적화 정리
+
+<br>
+
+**정리**
+
+* 엔티티 조회
+  * 엔티티를 조회해서 그대로 반환 : V1 -> 링크 걸어야 함.
+  * 엔티티 조회 후 DTO로 변환 : V2
+  * Fetch Join으로 쿼리 수 최적화 : V3
+  * 컬렉션 페이징과 한계 돌파 : V3.1
+    * 컬렉션은 Fetch Join시 페이징 불가능
+    * ToOne 관계는 Fetch Join으로 쿼리 수 최적화
+    * 컬렉션은 Fetch Join 대신에 지연 로딩을 유지하고, `BatchSize`로 최적화
+* DTO 직접 조회
+  * JPA에서 DTO 직접 조회 : V4
+  * 컬렉션 조회 최적화 - 일대다 관계인 컬렉션은 IN절을 활용해서 메모리에 미리 조회해서 최적화 : V5
+  * 플랫 데이터 최적화 - JOIN 결과를 그대로 조회 후 애플리케이션에서 원하는 모양으로 직접 변환 : V6
+ 
+<br>
+
+**권장 순서**
+
+1. 엔티티 조회 방식으로 우선 접근
+   1. Fetch Join으로 쿼리 수를 최적화
+   2. 컬렉션 최적화
+      1. 페이징 필요 - BatchSize로 최적화
+      2. 페이징 필요 없다면 Fetch Join 사용
+2. 엔티티 조회 방식으로 해결이 안되면 DTO 조회 방식 사용
+3. DTO 조회 방식으로 해결이 안되면 Native SQL이나 JdbcTemplate으로 해결
+
+<br>
+
+# OSIV와 성능 최적화
+
+<br>
+
+**OSIV 네이밍의 의미**
+
+JPA가 나오기전 Hibernate에서 `Open Session In View` (OSIV)를 만듬.
+
+그리고 JPA가 나오면서 Hibernate의 세션을 JPA에서는 엔티티매니저라고 명명함. `Open EntityManager In View` 
+
+현재 보통은 OSIV라고 부른다고 함. Spring에서는 `open-in-view`라고 부름.
+
+<br>
+
+**이걸 왜 알아야하는가?**
+
+* 이걸 잘 모르면 잘못하면 장애가 남.
+  * OSIV는 데이터베이스 커넥션과 관련이 깊다.
+  * OSIV를 ON하냐 OFF하냐에 따라 커넥션을 맺고 끊는 기간이 다르다.
+* 스프링의 디폴트는 `open-in-view`는 enable 되어있음.
+  * 실제로 warn을 로그로 찍어줌.
+
+<br>
+
+## OSIV - ON
+
+* OSIV를 ON하면 커넥션을 맺고 끊는 시점은 다음과 같다.
+  * 커넥션 맺음: `@Transactional` 애노테이션의 메서드를 시작할 때
+  * 커넥션 끊음: 스프링의 사용자에게 결과를 반환할 때 (API 응답이 끝날 때)까지 영속성 컨텍스트와 DB 커넥션을 맺고있다 결과가 반환되면 끊는다.
+* 언제 사용되는가?
+  * 서버 사이드 랜더링 사용할 때, View Template이나 API 컨트롤러에서 지연 로딩을 할 때 사용된다. 
+* 단점은?
+  * 너무 오랫동안 DB 커넥션 리소스를 사용하기 때문에, 실시간 트래픽이 중요한 애플리케이션에서는 커넥션이 부족할 수 있다. 결국 장애로 이어짐.
+  * ex. 컨트롤러에서 외부 API를 호출하면 외부 API 대기 시간만큼 커넥션 리소스를 반환하지못하고 유지해야함으로써 커넥션이 부족해질 수 있다.
+
+<br>
+
+## OSIV - OFF
+
+* OSIV를 OFF하면 커넥션을 맺고 끊는 시점은 다음과 같다.
+  * 커넥션 맺음: `@Transactional` 애노테이션의 메서드를 시작할 때
+  * 커넥션 끊음: 트랜잭션이 종료할 때 바로 영속성 컨텍스트를 닫고, DB 커넥션도 반환한다.
+* 장점
+  * DB 커넥션을 잡고있는 시간이 짧기 때문에, 커넥션 리소스를 낭비하지 않는다.
+* 단점
+  * OSIV를 OFF하면 모든 지연로딩을 트랜잭션 안에서 처리해야한다. 즉, View Template이나 API 컨트롤러에서 지연로딩을 사용하지 못한다.
+
+<br>
+
+## CQS
+실무에서는 OSIV를 OFF로하고 복잡성을 관리하는 좋은 방법으로 CQS를 사용한다.
+
+CQS는 Command Query Separation으로 명령과 조회에 대한 역할을 분리하는 것이다.
+
+<br>
+
+**CQS로 명령과 조회를 나누는 이유는?**
+
+* 보통 명령과 관련된 비즈니스 로직은 특정 엔티티 몇개를 등록하거나 수정하는 것이므로 성능에 크게 문제가 되지 않는다.
+* **문제는 조회와 관련된 복잡한 화면을 출력하기 위한 쿼리는 화면에 맞추어 성능을 최적화 하는 것이 중요하다.** 
+  * 하지만 이는 그 복잡성에 비해 핵심 비즈니스에 큰 영향을 주는 것은 아니다.
+  * 즉, **핵심 비즈니스 로직은 잘 변경되지 않지만, 화면을 출력하는 로직은 변경이 잦다. 그러므로 둘을 분리시켜주는 것이 유지보수면에서 훨씬 좋다. - 중요**
+* 유지보수관점에서 보면 CQS로 분리해서 나누는 것이 좋다.
+* 물론 애플리케이션의 규모가 작으면 둘을 나눌 필요 없다. 오히려 작은데 나누면 오버 엔지니어링으로 더 힘들어질 수 있다.
+
+<br>
+
+**CQS 서비스 예시**
+
+* OrderService
+  * OrderService: 핵심 비즈니스 로직
+  * OrderQueryService: 화면이나 API에 맞춘 서비스 (주로 읽기 전용 트랜잭션 사용)
+
+보통 서비스계층에서까지만 트랜잭션을 유지한다. 만약 View Template이나 API 컨트롤러에서 지연 로딩을 해야한다면 QueryService를 만들어서 지연 로딩을 하는 방법도 있다. 
+
+<br>
+
+> 영한님은 고객 서비스의 실시간 API는 OSIV를 끄고, 어드민의 경우 커넥션이 많지 않기 때문에 OSIV를 켠다고한다.
+
+
 
 

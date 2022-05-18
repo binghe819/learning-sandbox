@@ -2,6 +2,7 @@ package com.binghe.springbootjpaexample2.shoppin_mall.repository;
 
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.Member;
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.Order;
+import com.binghe.springbootjpaexample2.shoppin_mall.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -13,6 +14,9 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 엔티티 조회용 Repository
+ */
 @RequiredArgsConstructor
 @Repository
 public class OrderRepository {

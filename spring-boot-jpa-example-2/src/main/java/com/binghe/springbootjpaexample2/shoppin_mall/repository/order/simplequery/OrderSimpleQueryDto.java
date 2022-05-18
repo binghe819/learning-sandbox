@@ -1,4 +1,4 @@
-package com.binghe.springbootjpaexample2.shoppin_mall.repository;
+package com.binghe.springbootjpaexample2.shoppin_mall.repository.order.simplequery;
 
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.Address;
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderStatus;

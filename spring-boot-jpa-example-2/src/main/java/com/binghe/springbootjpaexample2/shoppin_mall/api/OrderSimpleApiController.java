@@ -5,10 +5,9 @@ import com.binghe.springbootjpaexample2.shoppin_mall.domain.Order;
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderStatus;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderRepository;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSearch;
-import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSimpleQueryDto;
+import com.binghe.springbootjpaexample2.shoppin_mall.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
