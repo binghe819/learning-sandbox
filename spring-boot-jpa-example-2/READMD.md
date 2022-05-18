@@ -837,7 +837,7 @@ JPA가 나오기전 Hibernate에서 `Open Session In View` (OSIV)를 만듬.
 * 이걸 잘 모르면 잘못하면 장애가 남.
   * OSIV는 데이터베이스 커넥션과 관련이 깊다.
   * OSIV를 ON하냐 OFF하냐에 따라 커넥션을 맺고 끊는 기간이 다르다.
-* 스프링의 디폴트는 `open-in-view`는 enable 되어있음.
+* 스프링의 디폴트는 `open-in-view`는 enable(true) 되어있음.
   * 실제로 warn을 로그로 찍어줌.
 
 <br>
@@ -864,6 +864,8 @@ JPA가 나오기전 Hibernate에서 `Open Session In View` (OSIV)를 만듬.
   * DB 커넥션을 잡고있는 시간이 짧기 때문에, 커넥션 리소스를 낭비하지 않는다.
 * 단점
   * OSIV를 OFF하면 모든 지연로딩을 트랜잭션 안에서 처리해야한다. 즉, View Template이나 API 컨트롤러에서 지연로딩을 사용하지 못한다.
+
+> 구글에 osiv 관련 검색을 하면 그림을 통해 쉽게 이해할 수 있다.
 
 <br>
 
@@ -896,7 +898,6 @@ CQS는 Command Query Separation으로 명령과 조회에 대한 역할을 분�
 <br>
 
 > 영한님은 고객 서비스의 실시간 API는 OSIV를 끄고, 어드민의 경우 커넥션이 많지 않기 때문에 OSIV를 켠다고한다.
-
 
 
 
