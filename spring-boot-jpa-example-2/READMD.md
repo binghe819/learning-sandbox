@@ -692,11 +692,96 @@ public List<OrderQueryDto> ordersV4() {
 <br>
 
 ### 여섯번째 개선 - DTO 직접 조회 (N + 1 해결 및 컬렉션 조회 최적화)
+이번에 위에서 발생한 DTO 직접 조회에서  N + 1 발생하는 문제를 해결하는 방법에 대해서 다룬다.
 
+> OrderRepository.java
+```java
+/**
+* 최적화 (컬렉션 최적화)
+* Query: 루트 목록 조회 1번, 컬렉션 1번
+* 데이터를 한꺼번에 처리할 때 많이 사용되는 방식
+*/
+public List<OrderQueryDto> findOrderQueryDtos_optimization() {
+    // 루트 목록 조회 (ToOne 코드를 모두 한번에 조회) - 쿼리 1번
+    List<OrderQueryDto> result = findOrders();
+    
+    // OrderItem 컬렉션을 Map으로 한번에 조회 - 쿼리 1번
+    List<Long> orderIds = result.stream()
+            .map(OrderQueryDto::getOrderId)
+            .collect(toList());
+    List<OrderItemQueryDto> orderItems = em.createQuery(
+            "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                    " from OrderItem oi" +
+                    " join oi.item i" + // ToOne 관계이기때문에 데이터 뻥튀기가 발생하지 않음으로 join해줌.
+                    " where oi.order.id in :orderIds", OrderItemQueryDto.class
+    ).setParameter("orderIds", orderIds).getResultList();
+    // Map을 사용해서 데이터 조립을 O(1)로 구현하였다.
+    Map<Long, List<OrderItemQueryDto>> orderItemMap = orderItems.stream()
+            .collect(groupingBy(OrderItemQueryDto::getOrderId));
+    
+    result.forEach(o -> o.setOrderItems(orderItemMap.get(o.getOrderId())));
+    
+    return result;
+}
+```
+* 쿼리 수
+  * 루트 1번 + 컬렉션 1번 (Order 1번 + in절을 사용해서 OrderLineItems 1번)
+* 동작 순서
+  * `ToOne` 관계를 먼저 조회하고, 여기서 얻은 식별자 orderId로 `ToMany` 관계인 OrderItem을 한번에 조회 (BatchSize와 동일한 동작 원리) 
+* 팁
+  * Map을 사용해서 Order와 OrderLineItem을 조립할 때 매칭 성능을 향상시킨다 (O(1))
 
 <br>
 
 ### 칠곱번째 개선 - DTO 직접 조회 (플랙 데이터 최적화)
+이번엔 아예 1번의 쿼리로 모든 정보를 가져오는 예시를 살펴본다.
+
+> OrderRepository.java
+```java
+/**
+ * 쿼리 한번에 가져오은 플랫 데이터 최적화
+ * JOIN을 사용해서 모든 데이터를 하나의 쿼리로 모두 가져오는 것.
+ */
+public List<OrderFlatDto> findAllByDto_flat() {
+    return em.createQuery(
+            "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                    " from Order o" +
+                    " join o.member m" +
+                    " join o.delivery d" +
+                    " join o.orderItems oi" +
+                    " join oi.item i",
+            OrderFlatDto.class
+    ).getResultList();
+}
+```
+
+> OrderFlatDto.java
+
+```java
+@Data
+public class OrderFlatDto {
+
+    // OrderQueryDto
+    private Long orderId;
+    private String name;
+    private LocalDateTime orderDate;
+    private Address address;
+    private OrderStatus orderStatus;
+
+    // OrderItemQueryDto
+    private String itemName;
+    private int orderPrice;
+    private int count;
+
+    // 생성자
+}
+```
+* 쿼리 수
+  * 1번에 모든 것을 가져온다.
+* 단점
+  * 쿼리는 한번이지만 다중 join으로 인해 DB에서 애플리케이션에 전달되는 데이터에 중복 데이터가 많이 생긴다. 상황에 따라선 더 느려질 수도 있다.
+  * 애플리케이션에서 추가 작업이 크다. (우선 DTO를 새로 만들어줘야한다는 것부터가 너무 종속적이다.)
+  * 페이징 불가능. (다중 join을 사용하기 때문에 불가능)
 
 <br>
 

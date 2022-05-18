@@ -6,6 +6,7 @@ import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderItem;
 import com.binghe.springbootjpaexample2.shoppin_mall.domain.OrderStatus;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderRepository;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.OrderSearch;
+import com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderFlatDto;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderQueryDto;
 import com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderQueryRepository;
 import lombok.Data;
@@ -78,6 +79,16 @@ public class OrderApiController {
     @GetMapping("/api/v4/orders")
     public List<OrderQueryDto> ordersV4() {
         return orderQueryRepository.findOrderQueryDtos();
+    }
+
+    @GetMapping("/api/v5/orders")
+    public List<OrderQueryDto> ordersV5() {
+        return orderQueryRepository.findOrderQueryDtos_optimization();
+    }
+
+    @GetMapping("/api/v6/orders")
+    public List<OrderFlatDto> ordersV6() {
+        return orderQueryRepository.findAllByDto_flat();
     }
 
     @Data

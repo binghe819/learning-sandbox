@@ -66,7 +66,7 @@ public class OrderQueryRepository {
      */
     public List<OrderFlatDto> findAllByDto_flat() {
         return em.createQuery(
-                "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                "select new com.binghe.springbootjpaexample2.shoppin_mall.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, d.address, o.status, i.name, oi.orderPrice, oi.count)" +
                         " from Order o" +
                         " join o.member m" +
                         " join o.delivery d" +
