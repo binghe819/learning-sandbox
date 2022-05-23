@@ -1,5 +1,6 @@
 package com.example.jpaqueryoptimization.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Entity
@@ -18,6 +20,7 @@ public class Tag {
 
     private String name;
 
-    @OneToMany(mappedBy = "tag")
-    private List<PostTag> postTags = new ArrayList<>();
+    public Tag(String name) {
+        this(null, name);
+    }
 }

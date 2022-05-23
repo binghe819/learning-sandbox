@@ -1,5 +1,7 @@
 package com.example.jpaqueryoptimization.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -7,6 +9,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Entity
@@ -23,9 +26,25 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User writer;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<PostTag> postTags = new ArrayList<>();
+
+    @Builder
+    public Post(String title, String content, User writer) {
+        this(null, title, content, writer, new ArrayList<>(), new ArrayList<>());
+    }
+
+    public void addTags(List<Tag> tags) {
+        tags.stream()
+                .map(tag -> new PostTag(tag, this))
+                .forEach(postTag -> this.postTags.add(postTag));
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        comment.updatePost(this);
+    }
 }

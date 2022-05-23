@@ -1,14 +1,16 @@
 package com.example.jpaqueryoptimization.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "Profile_Table")
 public class Profile {
 
     @Id
@@ -17,9 +19,18 @@ public class Profile {
 
     private String address;
 
-    private int phoneNumber;
+    private String phoneNumber;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Builder
+    public Profile(String address, String phoneNumber, User user) {
+        this(null, address, phoneNumber, user);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
