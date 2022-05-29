@@ -2,12 +2,12 @@ package com.example.jpaqueryoptimization.application;
 
 import com.example.jpaqueryoptimization.application.dto.CommentDto;
 import com.example.jpaqueryoptimization.application.dto.PostDto;
-import com.example.jpaqueryoptimization.domain.Comment;
-import com.example.jpaqueryoptimization.domain.Post;
-import com.example.jpaqueryoptimization.domain.Profile;
-import com.example.jpaqueryoptimization.domain.User;
+import com.example.jpaqueryoptimization.application.dto.PostTagDto;
+import com.example.jpaqueryoptimization.domain.*;
 import com.example.jpaqueryoptimization.domain.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +38,47 @@ public class PostToManyQueryService {
                 .collect(toList());
     }
 
+    public List<PostDto> findAllWithCommentFetchJoin() {
+        List<Post> posts = postRepository.findAllWithCommentsFetchJoin();
+        return posts
+                .stream()
+                .map(this::convertToPostDtos)
+                .collect(toList());
+    }
+
+    public List<PostDto> findAllWithCommentFetchJoinDistinct() {
+        List<Post> posts = postRepository.findAllWithCommentsFetchJoinDistinct();
+        return posts
+                .stream()
+                .map(this::convertToPostDtos)
+                .collect(toList());
+    }
+
+    public List<PostDto> findAllWithCommentsFetchJoinDistinctPageable(Pageable pageable) {
+        List<Post> posts = postRepository.findAllWithCommentsFetchJoinDistinctPageable(pageable);
+        return posts
+                .stream()
+                .map(this::convertToPostDtos)
+                .collect(toList());
+    }
+
+
+//    public List<PostDto> findAllWithCommentsAndPostTagFetchJoin() {
+//        List<Post> posts = postRepository.findAllWithCommentsAndPostTagFetchJoin();
+//        return posts
+//                .stream()
+//                .map(this::convertToPostDtos)
+//                .collect(toList());
+//    }
+
+    public List<PostDto> findAllWithCommentsAndPostTagWithBatchSize(Pageable pageable) {
+        List<Post> posts = postRepository.findAllWithCommentsAndPostTagWithBatchSizePageable(pageable);
+        return posts
+                .stream()
+                .map(this::convertToPostDtosWithPostTag)
+                .collect(toList());
+    }
+
     private PostDto convertToPostDtos(Post post) {
         User writer = post.getWriter();
         Profile profile = writer.getProfile();
@@ -46,6 +87,29 @@ public class PostToManyQueryService {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .commentDtos(convertToCommendDtos(post.getComments()))
+                .userId(writer.getId())
+                .name(writer.getName())
+                .address(profile.getAddress())
+                .phoneNumber(profile.getPhoneNumber())
+                .build();
+    }
+
+    private PostDto convertToPostDtosWithPostTag(Post post) {
+        User writer = post.getWriter();
+        Profile profile = writer.getProfile();
+        List<PostTagDto> postTagDtos = post.getPostTags()
+                .stream()
+                .map(postTag -> {
+                    String tagName = postTag.getTag().getName();
+                    return PostTagDto.builder().name(tagName).build();
+                })
+                .collect(toList());
+        return PostDto.builder()
+                .id(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .commentDtos(convertToCommendDtos(post.getComments()))
+                .postTagDtos(postTagDtos)
                 .userId(writer.getId())
                 .name(writer.getName())
                 .address(profile.getAddress())
@@ -70,4 +134,5 @@ public class PostToManyQueryService {
                 })
                 .collect(toList());
     }
+
 }
