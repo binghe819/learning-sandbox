@@ -27,7 +27,7 @@ public class ManualJobLauncher implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        String jobName = "stepLearningTestJob"; // Job 이름
+        String jobName = "executionContextJob"; // Job 이름
 
         Job job = determineJob(jobName);
 
