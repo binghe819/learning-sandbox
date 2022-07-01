@@ -14,7 +14,7 @@ import java.util.Collection;
  * 수동으로 JobLauncher를 통해 배치를 실행시키는 ApplicationRunner
  * -> 설정파일 (yml)에서 spring.batch.job.enabled = false로 해줘야한다.
  */
-@Component
+//@Component
 public class ManualJobLauncher implements ApplicationRunner {
 
     private final JobLauncher jobLauncher;
@@ -27,7 +27,7 @@ public class ManualJobLauncher implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        String jobName = "itemJob"; // Job 이름
+        String jobName = "helloJob"; // Job 이름
 
         Job job = determineJob(jobName);
 

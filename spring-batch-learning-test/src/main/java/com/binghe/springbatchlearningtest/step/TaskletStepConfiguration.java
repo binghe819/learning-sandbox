@@ -6,6 +6,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +42,8 @@ public class TaskletStepConfiguration {
     public Step taskletStepStep2() {
         return stepBuilderFactory.get("taskletStepStep2")
                 .<String, String>chunk(3)
-                .reader(new ListItemReader<>(Arrays.asList("item1", "item2", "item3", "item4", "item5")))
+                .reader(new JpaPagingItemReader<>())
+                .reader(new ListItemReader<>(Arrays.asList("item1", "item2", "item3", "item4", "item5", "item6", "item7", "item8", "item9", "item10")))
                 .processor((ItemProcessor<String, String>) String::toUpperCase)
                 .writer(items -> items.forEach(System.out::println))
                 .build();
