@@ -1,7 +1,7 @@
-package com.binghe.springresttemplate.application;
+package com.binghe.springresttemplate.user.application;
 
-import com.binghe.springresttemplate.domain.User;
-import com.binghe.springresttemplate.infra.UserRepository;
+import com.binghe.springresttemplate.user.domain.User;
+import com.binghe.springresttemplate.user.infra.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

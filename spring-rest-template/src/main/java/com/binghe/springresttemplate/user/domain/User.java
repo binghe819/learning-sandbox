@@ -1,4 +1,4 @@
-package com.binghe.springresttemplate.domain;
+package com.binghe.springresttemplate.user.domain;
 
 import lombok.Getter;
 

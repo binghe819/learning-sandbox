@@ -1,7 +1,7 @@
-package com.binghe.springresttemplate.presentation;
+package com.binghe.springresttemplate.user.presentation;
 
-import com.binghe.springresttemplate.application.UserDto;
-import com.binghe.springresttemplate.application.UserService;
+import com.binghe.springresttemplate.user.application.UserDto;
+import com.binghe.springresttemplate.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

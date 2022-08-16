@@ -1,6 +1,6 @@
-package com.binghe.springresttemplate.application;
+package com.binghe.springresttemplate.user.application;
 
-import com.binghe.springresttemplate.domain.User;
+import com.binghe.springresttemplate.user.domain.User;
 import lombok.Getter;
 
 @Getter
