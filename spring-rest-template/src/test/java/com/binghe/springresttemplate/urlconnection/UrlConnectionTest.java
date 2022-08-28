@@ -107,8 +107,7 @@ public class UrlConnectionTest {
             try (OutputStream os = urlConnection.getOutputStream()){
                 byte request_data[] = requestBody.getBytes("utf-8");
                 os.write(request_data);
-            }
-            catch(Exception e) {
+            } catch(Exception e) {
                 e.printStackTrace();
             }
 
