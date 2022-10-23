@@ -5,7 +5,9 @@ import com.binghe.springtransactionalandaop.persistence.CustomerDaoJdbc;
 import com.binghe.springtransactionalandaop.service.TransferService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
 
@@ -14,7 +16,12 @@ public class AppConfiguration {
 
     @Bean
     public TransferService transferService() {
-        return new TransferService(customerDao(), dataSource());
+        return new TransferService(customerDao(), platformTransactionManager());
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager() {
+        return new DataSourceTransactionManager(dataSource());
     }
 
     @Bean

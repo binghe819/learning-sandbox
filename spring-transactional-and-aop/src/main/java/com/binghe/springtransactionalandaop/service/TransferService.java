@@ -6,6 +6,9 @@ import com.binghe.springtransactionalandaop.persistence.CustomerDao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import javax.sql.DataSource;
@@ -16,21 +19,16 @@ import java.sql.SQLException;
 public class TransferService {
 
     private final CustomerDao customerDao;
-    private final DataSource dataSource;
+    private final PlatformTransactionManager platformTransactionManager;
 
-    public TransferService(CustomerDao customerDao, DataSource dataSource) {
+    public TransferService(CustomerDao customerDao, PlatformTransactionManager platformTransactionManager) {
         this.customerDao = customerDao;
-        this.dataSource = dataSource;
+        this.platformTransactionManager = platformTransactionManager;
     }
 
-    public void transfer(Long fromCustomerId, Long toCustomerId, Money amount) throws SQLException {
-        // 트랜잭션 동기화 관리자를 이용해 동기화 작업을 초기화한다.
-        TransactionSynchronizationManager.initSynchronization();
-        // DB 커넥션을 생성하고 트랜잭션을 시작한다.
-        Connection con = DataSourceUtils.getConnection(dataSource);
+    public void transfer(Long fromCustomerId, Long toCustomerId, Money amount) {
+        TransactionStatus status = platformTransactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
-            con.setAutoCommit(false);
-
             // 비즈니스 로직
             Customer from = findById(fromCustomerId);
             Customer to = findById(toCustomerId);
@@ -40,16 +38,10 @@ public class TransferService {
 
             from.withdraw(amount);
             customerDao.update(from);
-            con.commit();
+            platformTransactionManager.commit(status);
         } catch (Exception e) {
-            con.rollback();
+            platformTransactionManager.rollback(status);
             throw e;
-        } finally {
-            // 스프링 유틸리티 메서드를 이용해 DB 커넥션을 안전하게 닫는다.
-            DataSourceUtils.releaseConnection(con, dataSource);
-            // 동기화 작업 종료 및 정리
-            TransactionSynchronizationManager.unbindResource(this.dataSource);
-            TransactionSynchronizationManager.clearSynchronization();
         }
     }
 
