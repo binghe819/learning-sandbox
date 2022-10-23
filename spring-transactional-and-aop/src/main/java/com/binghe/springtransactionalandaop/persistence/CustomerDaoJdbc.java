@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 @Repository
-public class CustomerDaoJdbcTemplate implements CustomerDao {
+public class CustomerDaoJdbc implements CustomerDao {
 
     private static final RowMapper<Customer> mapper = (rs, rowNum) -> {
         Long id = rs.getLong("id");
@@ -25,7 +25,7 @@ public class CustomerDaoJdbcTemplate implements CustomerDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public CustomerDaoJdbcTemplate(DataSource dataSource) {
+    public CustomerDaoJdbc(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
