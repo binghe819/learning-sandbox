@@ -16,8 +16,6 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.from;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 주의! 본 프로젝트는 Spring Boot를 사용하지않으므로 내장 H2가 실행되지않습니다.
@@ -25,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppConfiguration.class)
-class TransferServiceTest {
+class TransferServiceImplTest {
 
     @Autowired
-    private TransferService transferService;
+    private TransferService transferServiceTx;
 
     @Autowired
     private CustomerDao customerDao;
@@ -46,7 +44,7 @@ class TransferServiceTest {
         Long toCustomerId = customerDao.add(Customer.builder().name("받는 사람").balance(Money.ZERO).build());
 
         // when
-        assertThatThrownBy(() -> transferService.transfer(fromCustomerId, toCustomerId, Money.of(BigDecimal.valueOf(10_000))))
+        assertThatThrownBy(() -> transferServiceTx.transfer(fromCustomerId, toCustomerId, Money.of(BigDecimal.valueOf(10_000))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("통장 잔고는 마이너스가 될 수 없습니다.");
 
@@ -60,7 +58,7 @@ class TransferServiceTest {
     @DisplayName("송금 테스트 - 존재하지않는 Customer의 경우 송금할 수 없다.")
     @Test
     void transfer_non_existed_customer() {
-        assertThatThrownBy(() -> transferService.transfer(-1L, -2L, Money.of(BigDecimal.TEN)))
+        assertThatThrownBy(() -> transferServiceTx.transfer(-1L, -2L, Money.of(BigDecimal.TEN)))
                 .isInstanceOf(RuntimeException.class);
     }
 }
