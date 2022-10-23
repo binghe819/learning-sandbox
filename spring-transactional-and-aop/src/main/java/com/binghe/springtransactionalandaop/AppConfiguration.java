@@ -2,6 +2,7 @@ package com.binghe.springtransactionalandaop;
 
 import com.binghe.springtransactionalandaop.persistence.CustomerDao;
 import com.binghe.springtransactionalandaop.persistence.CustomerDaoJdbc;
+import com.binghe.springtransactionalandaop.service.TransactionProxyFactoryBean;
 import com.binghe.springtransactionalandaop.service.TransferService;
 import com.binghe.springtransactionalandaop.service.TransferServiceImpl;
 import com.binghe.springtransactionalandaop.service.TransferServiceTx;
@@ -21,9 +22,19 @@ public class AppConfiguration {
         return new TransferServiceImpl(customerDao());
     }
 
+//    @Bean
+//    public TransferService transferServiceTx() {
+//        return new TransferServiceTx(transferServiceImpl(), platformTransactionManager());
+//    }
+
     @Bean
-    public TransferService transferServiceTx() {
-        return new TransferServiceTx(transferServiceImpl(), platformTransactionManager());
+    public TransactionProxyFactoryBean transferService() {
+        return new TransactionProxyFactoryBean(
+                transferServiceImpl(),
+                platformTransactionManager(),
+                "transfer",
+                TransferService.class
+        );
     }
 
     @Bean

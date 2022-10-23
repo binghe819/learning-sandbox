@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class TransferServiceImplTest {
 
     @Autowired
-    private TransferService transferServiceTx;
+    private TransferService transferService;
 
     @Autowired
     private CustomerDao customerDao;
@@ -44,7 +44,7 @@ class TransferServiceImplTest {
         Long toCustomerId = customerDao.add(Customer.builder().name("받는 사람").balance(Money.ZERO).build());
 
         // when
-        assertThatThrownBy(() -> transferServiceTx.transfer(fromCustomerId, toCustomerId, Money.of(BigDecimal.valueOf(10_000))))
+        assertThatThrownBy(() -> transferService.transfer(fromCustomerId, toCustomerId, Money.of(BigDecimal.valueOf(10_000))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("통장 잔고는 마이너스가 될 수 없습니다.");
 
@@ -58,7 +58,7 @@ class TransferServiceImplTest {
     @DisplayName("송금 테스트 - 존재하지않는 Customer의 경우 송금할 수 없다.")
     @Test
     void transfer_non_existed_customer() {
-        assertThatThrownBy(() -> transferServiceTx.transfer(-1L, -2L, Money.of(BigDecimal.TEN)))
+        assertThatThrownBy(() -> transferService.transfer(-1L, -2L, Money.of(BigDecimal.TEN)))
                 .isInstanceOf(RuntimeException.class);
     }
 }
