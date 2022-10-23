@@ -3,6 +3,7 @@ package com.binghe.springtransactionalandaop.domain;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 public class Money {
@@ -31,5 +32,18 @@ public class Money {
 
     public boolean isMoneyLessThanZero() {
         return value.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Money money = (Money) o;
+        return Objects.equals(value.longValue(), money.value.longValue());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
     }
 }
