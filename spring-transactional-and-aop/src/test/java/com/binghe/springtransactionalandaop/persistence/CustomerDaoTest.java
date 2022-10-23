@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -56,14 +58,19 @@ class CustomerDaoTest {
         assertThat(newCustomer.getBalance().getValue()).isEqualTo(balance.getValue());
     }
 
-    @DisplayName("update - 고객의 정보를 업데이트한다.")
+    @DisplayName("update - 고객의 정보를 업데이트한다. (입금 정보)")
     @Test
-    void update_customer_infomation() {
+    void update_customer() {
         // given
         Long customerId = customerDao.add(customer);
         Customer customer = customerDao.findById(customerId);
 
         // when
+        customer.deposit(Money.of(BigDecimal.valueOf(100_000L)));
+        customerDao.update(customer);
 
+        // then
+        Customer updatedCustomer = customerDao.findById(customerId);
+        assertThat(updatedCustomer.getBalance().getValue()).isGreaterThanOrEqualTo(BigDecimal.valueOf(100_000L));
     }
 }
