@@ -1,7 +1,5 @@
 package thread_pool.java_thread_pool.invoke;
 
-import jdk.nashorn.internal.codegen.CompilerConstants;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
