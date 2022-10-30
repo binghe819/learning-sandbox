@@ -1,4 +1,4 @@
-package thread_pool.asynchronism;
+package concurrent.future;
 
 import thread_pool.ThreadPrintUtils;
 
