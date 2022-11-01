@@ -2,10 +2,12 @@ package com.binghe.springtransactionalandaop;
 
 import com.binghe.springtransactionalandaop.persistence.CustomerDao;
 import com.binghe.springtransactionalandaop.persistence.CustomerDaoJdbc;
-import com.binghe.springtransactionalandaop.service.TransactionProxyFactoryBean;
+import com.binghe.springtransactionalandaop.service.TransactionMethodInterceptor;
 import com.binghe.springtransactionalandaop.service.TransferService;
 import com.binghe.springtransactionalandaop.service.TransferServiceImpl;
-import com.binghe.springtransactionalandaop.service.TransferServiceTx;
+import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -22,19 +24,32 @@ public class AppConfiguration {
         return new TransferServiceImpl(customerDao());
     }
 
-//    @Bean
-//    public TransferService transferServiceTx() {
-//        return new TransferServiceTx(transferServiceImpl(), platformTransactionManager());
-//    }
+    // 어드바이스 설정
+    @Bean
+    public TransactionMethodInterceptor transactionAdvice() {
+        return new TransactionMethodInterceptor(platformTransactionManager());
+    }
+
+    // 포인트 컷 설정
+    @Bean
+    public NameMatchMethodPointcut transactionPointcut() {
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("transfer");
+        return pointcut;
+    }
+
+    // 어드바이저 빈 설정
+    @Bean
+    public DefaultPointcutAdvisor transactionAdvisor() {
+        return new DefaultPointcutAdvisor(transactionPointcut(), transactionAdvice());
+    }
 
     @Bean
-    public TransactionProxyFactoryBean transferService() {
-        return new TransactionProxyFactoryBean(
-                transferServiceImpl(),
-                platformTransactionManager(),
-                "transfer",
-                TransferService.class
-        );
+    public TransferService transferService() {
+        ProxyFactoryBean pfBean = new ProxyFactoryBean();
+        pfBean.setTarget(transferServiceImpl());
+        pfBean.addAdvisor(transactionAdvisor());
+        return (TransferService) pfBean.getObject();
     }
 
     @Bean
