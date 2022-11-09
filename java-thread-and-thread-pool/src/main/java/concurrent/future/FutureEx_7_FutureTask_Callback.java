@@ -54,7 +54,7 @@ public class FutureEx_7_FutureTask_Callback {
 
         CallbackFutureTask callbackFutureTask = new CallbackFutureTask(() -> {
             Thread.sleep(1_000);
-            if (1==1) throw new RuntimeException("비동기 처리중 Error!!");
+//            if (1==1) throw new RuntimeException("비동기 처리중 Error!!");
             return ThreadPrintUtils.getCurrentThreadName() + "Async Hello ";
         },
         s -> System.out.println("Result : " + s),

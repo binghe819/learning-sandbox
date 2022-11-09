@@ -18,12 +18,26 @@ public class FutureEx_2_execute {
 
         es.execute(() -> {
             try {
-                Thread.sleep(5_000);
+                Thread.sleep(3000);
             } catch (InterruptedException e) {}
-            System.out.println(ThreadPrintUtils.getCurrentThreadName() + "Async Hello ");
+            System.out.println(ThreadPrintUtils.getCurrentThreadName() + " Start");
         });
 
-        System.out.println(ThreadPrintUtils.getCurrentThreadName() + "Exit");
+        es.execute(() -> {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {}
+            System.out.println(ThreadPrintUtils.getCurrentThreadName() + " Process");
+        });
+
+        es.execute(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {}
+            System.out.println(ThreadPrintUtils.getCurrentThreadName() + " End");
+        });
+
+        System.out.println(ThreadPrintUtils.getCurrentThreadName() + " Exit");
 
         es.shutdown();
     }
