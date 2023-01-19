@@ -19,24 +19,27 @@ public class FutureEx_4_submit_and_future_2 {
 
         // 3가지의 작업을 병렬적으로 실행시키기위해 ThreadPool에 작업들을 submit한다.
         Future<String> result1 = es.submit(() -> {
+            System.out.println("Async Hello Task Started!");
             Thread.sleep(1_000);
             return ThreadPrintUtils.getCurrentThreadName() + "Async Hello ";
         });
 
         Future<String> result2 = es.submit(() -> {
+            System.out.println("Async World Task Started!");
             Thread.sleep(2_000);
-            return ThreadPrintUtils.getCurrentThreadName() + "Async Hello ";
+            return ThreadPrintUtils.getCurrentThreadName() + "Async World ";
         });
 
         Future<String> result3 = es.submit(() -> {
+            System.out.println("Async Test Task Started!");
             Thread.sleep(3_000);
-            return ThreadPrintUtils.getCurrentThreadName() + "Async Hello ";
+            return ThreadPrintUtils.getCurrentThreadName() + "Async Test ";
         });
 
         System.out.println("Exit");
 
         // Future.get될 때, submit으로 넘긴 Callable 작업을 그제서야 실행하는 것이 아닌, ThreadPool에 submit하자마다 실행된다.
-        // 여러 작업들이 비동기적으로 계속 동작하다가, get 메서드가 호출되었을때 blocking되면서 결과를 가져오는 것. (Thread.join과 유사하다)
+        // 여러 작업들이 비동기적으로 계속 동작하다가, get 메서드가 호출되었을때 blockin 되면서 결과를 가져오는 것. (Thread.join과 유사하다)
         System.out.println(result1.get());
         System.out.println(result2.get());
         System.out.println(result3.get());

@@ -12,9 +12,16 @@ public class CompletableFutureEx_6_thenRun {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         CompletableFuture<Void> future = CompletableFuture.supplyAsync(() -> {
             System.out.println("Hello " + Thread.currentThread().getName());
+
+            try {
+                Thread.sleep(3_000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             return "Hello ";
         }).thenRun(() -> {
-            System.out.println("hihi");
+            System.out.println("Computation Finished");
         });
 
         future.get();

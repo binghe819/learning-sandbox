@@ -14,10 +14,25 @@ public class CompletableFutureEx_3_supplyAsync {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         ExecutorService es = Executors.newFixedThreadPool(4);
-        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> "Hello " + Thread.currentThread().getName(), es);
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            System.out.println("Hello Task Started! - " + Thread.currentThread().getName());
+
+            try {
+                Thread.sleep(3_000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return "Hello " + Thread.currentThread().getName();
+        }, es);
+
+        Thread.sleep(1_000);
+        System.out.println("Main은 그대로 실행됨.");
 
         // get()을 호출해야지만, 비동기적으로 동작한다.
-        System.out.println(future.get());
+//        System.out.println(future.get());
+
+//        System.out.println("Blocking때문에 늦게 실행된다.");
 
         es.shutdown();
     }

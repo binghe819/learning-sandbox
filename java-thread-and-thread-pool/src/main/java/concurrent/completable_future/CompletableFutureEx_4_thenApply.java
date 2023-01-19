@@ -2,6 +2,8 @@ package concurrent.completable_future;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * thenApply(Function)
@@ -15,14 +17,18 @@ import java.util.concurrent.ExecutionException;
 public class CompletableFutureEx_4_thenApply {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        ExecutorService es = Executors.newFixedThreadPool(4);
+
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             System.out.println("Hello " + Thread.currentThread().getName());
             return "Hello ";
-        }).thenApply((s) -> {
+        }, es).thenApplyAsync((s) -> {
             System.out.println(Thread.currentThread().getName());
             return s.toUpperCase();
-        });
+        }, es);
 
-        System.out.println(future.get());
+//        System.out.println(future.get());
+
+        es.shutdown();
     }
 }

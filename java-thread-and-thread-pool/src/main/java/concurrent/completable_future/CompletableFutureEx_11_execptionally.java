@@ -20,10 +20,10 @@ public class CompletableFutureEx_11_execptionally {
             System.out.println("Hello " + Thread.currentThread().getName());
             return "Hello";
         }).exceptionally(ex -> {
-            System.out.println(ex);
+            System.out.println(ex); // java.util.concurrent.CompletionException: java.lang.IllegalArgumentException
             return "ERROR!";
         });
 
-        System.out.println(future.get());
+        System.out.println(future.get()); // ERROR
     }
 }

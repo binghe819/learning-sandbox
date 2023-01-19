@@ -11,11 +11,23 @@ public class CompletableFutureEx_8_thenCombine {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         CompletableFuture<String> hello = CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(3_000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             System.out.println("Hello " + Thread.currentThread().getName());
             return "Hello";
         });
 
         CompletableFuture<String> world = CompletableFuture.supplyAsync(() -> {
+            try {
+                Thread.sleep(1_500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             System.out.println("World " + Thread.currentThread().getName());
             return "World";
         });

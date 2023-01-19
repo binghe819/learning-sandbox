@@ -25,9 +25,9 @@ public class CompletableFutureEx_9_allOf {
 
         List<CompletableFuture<String>> futures = Arrays.asList(hello, world);
         CompletableFuture[] futuresArray = futures.toArray(new CompletableFuture[futures.size()]);
-        CompletableFuture<List<String>> results = CompletableFuture.allOf(futuresArray)
+        CompletableFuture<List<String>> results = CompletableFuture.allOf(futuresArray) // futuresArray로 주어진 Future들이 모두 끝났다는 것을 보장.
                 .thenApply(v -> futures.stream()
-                        .map(CompletableFuture::join)
+                        .map(stringCompletableFuture -> stringCompletableFuture.join())
                         .collect(Collectors.toList()));
 
         results.get().forEach(System.out::println);

@@ -14,6 +14,7 @@ public class CompletableFutureEx_2_runAsync {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             System.out.println("Hello " + currentThread().getName());
+            System.out.println("TESTTESTTEST");
         });
 
         // get()을 호출해야지만, 비동기적으로 동작한다.
