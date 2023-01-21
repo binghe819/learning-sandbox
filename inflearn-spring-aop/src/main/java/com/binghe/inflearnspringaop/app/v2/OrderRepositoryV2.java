@@ -1,0 +1,20 @@
+package com.binghe.inflearnspringaop.app.v2;
+
+public class OrderRepositoryV2 {
+
+    public void save(String itemId) {
+        // 저장 로직
+        if (itemId.equals("ex")) {
+            throw new IllegalArgumentException("예외 발생!");
+        }
+        sleep(1_000);
+    }
+
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
