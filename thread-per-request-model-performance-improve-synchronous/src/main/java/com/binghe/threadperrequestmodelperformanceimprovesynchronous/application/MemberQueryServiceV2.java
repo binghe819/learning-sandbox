@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * 동기/블로킹 방식으로 회원 정보 및 잔고를 조회하는 Service
+ * CompletableFuture를 이용한 비동기 방식으로 회원 정보 및 잔고를 조회하는 Service
  */
 @RequiredArgsConstructor
 @Service
-public class MemberQueryServiceV1 {
+public class MemberQueryServiceV2 {
 
     private final MemberRepository memberRepository;
     private final CheckBalance dossBankCheckBalance;
@@ -25,6 +25,9 @@ public class MemberQueryServiceV1 {
 
     @StopWatch
     public CheckMemberBalanceResponse checkMemberBalances(Long memberId) {
+
+
+
         Member member = memberRepository.findById(memberId).orElse(new Member("anonymous", 27));
         CheckBalanceResult dossBalance = dossBankCheckBalance.checkBalance(memberId);
         CheckBalanceResult kakaokBalance = kakaokBankCheckBalance.checkBalance(memberId);

@@ -1,4 +1,4 @@
-package com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastructure.v1;
+package com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastructure;
 
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.CheckBalance;
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.CheckBalanceResult;
@@ -7,19 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Slf4j
 @Component
-public class DossBankCheckBalanceV1 implements CheckBalance {
+public class DossBankCheckBalance implements CheckBalance {
     private static final String BANK_NAME = "DOSS";
-
-    private final ExecutorService executorService;
-
-    public DossBankCheckBalanceV1() {
-        this.executorService = Executors.newFixedThreadPool(10);
-    }
 
     @StopWatch
     @Override
