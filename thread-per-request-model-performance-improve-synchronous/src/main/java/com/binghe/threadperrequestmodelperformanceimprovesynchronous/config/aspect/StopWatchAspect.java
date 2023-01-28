@@ -25,8 +25,9 @@ public class StopWatchAspect {
             log.info("{} latency : {} ms", stopWatch.getLastTaskName(), stopWatch.getTotalTimeMillis());
             return result;
         } catch (Exception e) {
+            stopWatch.stop();
             log.info("{} exception latency : {} ms", stopWatch.getLastTaskName(), stopWatch.getTotalTimeMillis());
-            return joinPoint.proceed();
+            throw e;
         }
     }
 }
