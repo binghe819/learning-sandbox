@@ -4,7 +4,7 @@ import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.Chec
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.CheckBalanceResult;
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.Member;
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.MemberRepository;
-import com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastructure.timecount.StopWatch;
+import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.StopWatch;
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.presentation.CheckMemberBalanceResponse;
 import org.springframework.stereotype.Service;
 

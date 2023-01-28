@@ -1,4 +1,4 @@
-package com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastructure.timecount;
+package com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

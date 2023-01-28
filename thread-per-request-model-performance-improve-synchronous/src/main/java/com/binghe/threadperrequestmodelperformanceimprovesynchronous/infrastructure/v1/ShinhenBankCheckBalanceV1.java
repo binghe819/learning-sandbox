@@ -2,7 +2,7 @@ package com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastruc
 
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.CheckBalance;
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.CheckBalanceResult;
-import com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastructure.timecount.StopWatch;
+import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.StopWatch;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
