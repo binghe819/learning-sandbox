@@ -19,16 +19,16 @@ import java.util.List;
 public class MemberQueryServiceV1 {
 
     private final MemberRepository memberRepository;
-    private final CheckBalance dossBankCheckBalance;
-    private final CheckBalance kakaokBankCheckBalance;
-    private final CheckBalance shinhenBankCheckBalance;
+    private final CheckBalance dossBankCheckBalanceV1;
+    private final CheckBalance kakaokBankCheckBalanceV2;
+    private final CheckBalance shinhenBankCheckBalanceV3;
 
     @StopWatch
     public CheckMemberBalanceResponse checkMemberBalances(Long memberId) {
         Member member = memberRepository.findById(memberId).orElse(new Member("anonymous", 27));
-        CheckBalanceResult dossBalance = dossBankCheckBalance.checkBalance(memberId);
-        CheckBalanceResult kakaokBalance = kakaokBankCheckBalance.checkBalance(memberId);
-        CheckBalanceResult shinhenBalance = shinhenBankCheckBalance.checkBalance(memberId);
+        CheckBalanceResult dossBalance = dossBankCheckBalanceV1.checkBalance(memberId);
+        CheckBalanceResult kakaokBalance = kakaokBankCheckBalanceV2.checkBalance(memberId);
+        CheckBalanceResult shinhenBalance = shinhenBankCheckBalanceV3.checkBalance(memberId);
         return CheckMemberBalanceResponse.builder()
                 .name(member.getName())
                 .age(member.getAge())

@@ -1,4 +1,4 @@
-package com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastructure;
+package com.binghe.threadperrequestmodelperformanceimprovesynchronous.infrastructure.v2;
 
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.CheckBalance;
 import com.binghe.threadperrequestmodelperformanceimprovesynchronous.domain.CheckBalanceResult;
@@ -10,16 +10,14 @@ import java.math.BigDecimal;
 
 @Slf4j
 @Component
-public class DossBankCheckBalance implements CheckBalance {
-    private static final String BANK_NAME = "DOSS";
+public class ShinhenBankCheckBalanceV2 implements CheckBalance {
+    private static final String BANK_NAME = "SHINHEN";
 
     @StopWatch
     @Override
     public CheckBalanceResult checkBalance(Long memberId) {
-
-        // DossBank로부터 HTTP 요청 -> Sleep으로 대체.
         try {
-            Thread.sleep(3_000);
+            Thread.sleep(1_000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

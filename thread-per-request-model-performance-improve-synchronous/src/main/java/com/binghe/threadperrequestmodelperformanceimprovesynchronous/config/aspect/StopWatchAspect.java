@@ -19,13 +19,14 @@ public class StopWatchAspect {
         org.springframework.util.StopWatch stopWatch = new org.springframework.util.StopWatch();
         try {
             stopWatch.start(taskName);
+            log.info("{} started! ", taskName);
             Object result = joinPoint.proceed();
             stopWatch.stop();
-            log.info("{} 정상 latency : {} ms", stopWatch.getLastTaskName(), stopWatch.getTotalTimeMillis());
+            log.info("{} latency : {} ms", stopWatch.getLastTaskName(), stopWatch.getTotalTimeMillis());
             return result;
         } catch (Exception e) {
-            log.info("{} 예외 latency : {} ms", stopWatch.getLastTaskName(), stopWatch.getTotalTimeMillis());
-            throw e;
+            log.info("{} exception latency : {} ms", stopWatch.getLastTaskName(), stopWatch.getTotalTimeMillis());
+            return joinPoint.proceed();
         }
     }
 }

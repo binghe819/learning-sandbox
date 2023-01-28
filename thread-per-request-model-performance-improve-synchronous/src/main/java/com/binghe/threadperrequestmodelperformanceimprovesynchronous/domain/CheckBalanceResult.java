@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 public class CheckBalanceResult {
+    public static final CheckBalanceResult EMPTY = new CheckBalanceResult("", BigDecimal.ZERO);
 
     private String bankName;
     private BigDecimal balance;
