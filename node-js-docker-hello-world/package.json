@@ -1,0 +1,14 @@
+{
+  "name": "js-docker-hello-world",
+  "version": "1.0.0",
+  "description": "Docker를 이용한 Node.js App 학습 테스트",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "4.17.1"
+  }
+}
