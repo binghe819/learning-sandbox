@@ -65,6 +65,7 @@ public class PubSub_Scheduler_async_subscribeOn_publishOn {
                 @Override
                 public void onError(Throwable throwable) {
                     es.execute(() -> sub.onError(throwable));
+                    es.shutdown();
                 }
 
                 @Override
