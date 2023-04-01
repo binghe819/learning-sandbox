@@ -34,7 +34,8 @@ public class PubSub_operator_map {
     public static void main(String[] args) {
         Publisher<Integer> pub = iterPub(Stream.iterate(1, a -> a + 1).limit(5).collect(toList()));
         Publisher<Integer> mapPub = mapPub(pub, s -> s * 10);
-        mapPub.subscribe(logSub());
+        Publisher<Integer> map2Pub = mapPub(mapPub, s -> -s);
+        map2Pub.subscribe(logSub());
     }
 
     private static Publisher<Integer> mapPub(Publisher<Integer> pub, Function<Integer, Integer> f) {
