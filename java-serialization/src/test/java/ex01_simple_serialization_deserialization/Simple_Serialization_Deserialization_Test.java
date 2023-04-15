@@ -17,7 +17,7 @@ class Simple_Serialization_Deserialization_Test {
     /**
      * <직렬화>
      * - static, transient 값은 직렬화 되지 않는다. (직렬화 대상이 아님)
-     * - Serializable을 구현하고있지 않으면 직렬화가 되지 않는다. (java.io.NotSerializableException: Person 발생)
+     * - Serializable을 구현하고있지 않으면 직렬화가 되지 않는다. (java.io.NotSerializableException: ex04_serialization_versionUID.Person 발생)
      *
      * <역직렬화>
      * - transient 값은 null로 초기화된다.
