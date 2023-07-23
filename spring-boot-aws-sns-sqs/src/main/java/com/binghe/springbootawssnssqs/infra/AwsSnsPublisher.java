@@ -37,6 +37,8 @@ public class AwsSnsPublisher {
                                 .withDataType("String")
                                 .withStringValue(APPLICATION_JSON_UTF8_VALUE));
 
-        return amazonSNS.publish(publishRequest);
+        PublishResult result = amazonSNS.publish(publishRequest);
+        log.info("[TOPIC::{}] published MessageID : {}", topic, result.getMessageId());
+        return result;
     }
 }
