@@ -5,6 +5,7 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sqs.AmazonSQSAsync;
@@ -33,17 +34,14 @@ public class AwsConfiguration {
     @Value("${cloud.aws.credentials.secret-key}")
     private String awsSecretKey;
 
-    @Value("${cloud.aws.region.static}")
-    private String awsRegion;
-
     /**
      * SNS 설정
      */
     @Bean
     public AmazonSNS amazonSNS() {
         return AmazonSNSClient.builder()
-                .withCredentials(new AWSStaticCredentialsProvider(new AnonymousAWSCredentials()))
-                .withRegion(awsRegion)
+//                .withCredentials(getAwsCredentialsProvider())
+                .withRegion(Regions.AP_NORTHEAST_2)
                 .build();
     }
 
@@ -66,7 +64,7 @@ public class AwsConfiguration {
         return AmazonSQSAsyncClientBuilder
                 .standard()
 //                .withCredentials(new AWSStaticCredentialsProvider(getAwsCredentials()))
-                .withRegion(awsRegion)
+                .withRegion(Regions.AP_NORTHEAST_2)
                 .build();
     }
 
