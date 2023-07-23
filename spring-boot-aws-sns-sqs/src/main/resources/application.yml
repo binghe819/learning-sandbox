@@ -1,0 +1,13 @@
+cloud:
+  aws:
+    credentials:
+      access-key: accesskey
+      secret-key: secretkey
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
+sns-topic:
+  binghe-test-sns: arn:aws:sns:ap-northeast-2:385423560848:binghe-test-sns
