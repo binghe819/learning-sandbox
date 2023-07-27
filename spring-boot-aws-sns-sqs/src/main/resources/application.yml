@@ -8,3 +8,6 @@ cloud:
 
 sns-topic:
   binghe-test-sns: "arn:aws:sns:ap-northeast-2:385423560848:binghe-test-sns"
+
+sqs-event:
+  binghe-test-sqs: "arn:aws:sqs:ap-northeast-2:385423560848:binghe-test"

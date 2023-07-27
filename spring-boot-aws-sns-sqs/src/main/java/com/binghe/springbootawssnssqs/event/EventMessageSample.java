@@ -2,7 +2,9 @@ package com.binghe.springbootawssnssqs.event;
 
 
 import lombok.Getter;
+import lombok.ToString;
 
+@ToString
 @Getter
 public class EventMessageSample {
 
