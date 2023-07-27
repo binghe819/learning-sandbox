@@ -78,19 +78,26 @@ public class AwsConfiguration {
     public QueueMessageHandlerFactory queueMessageHandlerFactory(AmazonSQSAsync amazonSqs) {
         QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
         MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        messageConverter.setStrictContentTypeMatch(false);
         messageConverter.setObjectMapper(objectMapper());
         factory.setAmazonSqs(amazonSqs);
         factory.setArgumentResolvers(Collections.singletonList(new PayloadMethodArgumentResolver(messageConverter)));
         return factory;
     }
 
+    /**
+     * SQS는 @SqsListener 이용하면 쉽게 Consume 할 수 있다.
+     *
+     * 다만, 디폴트로는 Short Polling한다. 그러므로 Long Polling 이용하려면 아래와 같이 설정해줘야한다.
+     *
+     * 그외에도 Visibility 설정등 SQS의 메시지를 Consume 할 때의 다양한 설정을 해줄 수 있다.
+     */
     @Bean
     public SimpleMessageListenerContainerFactory simpleMessageListenerContainerFactory(AmazonSQSAsync amazonSqs,
                                                                                        SimpleAsyncTaskExecutor simpleAsyncTaskExecutor) {
         SimpleMessageListenerContainerFactory factory = new SimpleMessageListenerContainerFactory();
         factory.setAmazonSqs(amazonSqs);
         factory.setWaitTimeOut(10); // polling 설정
+        factory.setVisibilityTimeout(30);
         factory.setTaskExecutor(simpleAsyncTaskExecutor);
         return factory;
     }
