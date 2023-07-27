@@ -75,14 +75,22 @@ public class AwsConfiguration {
     }
 
     @Bean
-    public QueueMessageHandlerFactory queueMessageHandlerFactory(AmazonSQSAsync amazonSqs) {
-        QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
-        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        messageConverter.setObjectMapper(objectMapper());
-        factory.setAmazonSqs(amazonSqs);
-        factory.setArgumentResolvers(Collections.singletonList(new PayloadMethodArgumentResolver(messageConverter)));
-        return factory;
+    public MappingJackson2MessageConverter mappingJackson2MessageConverter() {
+        MappingJackson2MessageConverter mappingJackson2MessageConverter = new MappingJackson2MessageConverter();
+        mappingJackson2MessageConverter.setStrictContentTypeMatch(false);
+        return mappingJackson2MessageConverter;
     }
+
+//    @Bean
+//    public QueueMessageHandlerFactory queueMessageHandlerFactory(AmazonSQSAsync amazonSqs) {
+//        QueueMessageHandlerFactory factory = new QueueMessageHandlerFactory();
+//        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
+//        messageConverter.setStrictContentTypeMatch(false);
+//        messageConverter.setObjectMapper(objectMapper());
+//        factory.setAmazonSqs(amazonSqs);
+//        factory.setArgumentResolvers(Collections.singletonList(new PayloadMethodArgumentResolver(messageConverter)));
+//        return factory;
+//    }
 
     /**
      * SQS는 @SqsListener 이용하면 쉽게 Consume 할 수 있다.
