@@ -42,3 +42,23 @@ protobuf {
         }
     }
 }
+
+task gRpcServerJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.binghe.server.HelloServiceGrpcServer'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task gRpcClientJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'com.binghe.client.HelloServiceClient'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
