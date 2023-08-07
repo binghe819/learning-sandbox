@@ -10,11 +10,13 @@ import java.util.List;
 
 public class HelloServiceImpl extends HelloServiceGrpc.HelloServiceImplBase {
 
+    private static final String HELLO = "Hello ! ";
+
     // unary
     @Override
     public void hello(HelloRequest request, StreamObserver<HelloResponse> responseObserver) {
 
-        String greeting = request.getFirstName() + "," + request.getLastName();
+        String greeting = HELLO + request.getFirstName() + "," + request.getLastName();
 
         HelloResponse response = HelloResponse.newBuilder()
                 .setGreeting(greeting)
@@ -30,14 +32,16 @@ public class HelloServiceImpl extends HelloServiceGrpc.HelloServiceImplBase {
                                   StreamObserver<HelloResponse> responseObserver) {
 
         List<String> greetingList = new ArrayList<>();
+
         for (int i = 1; i <= 3; i++) {
-            greetingList.add(request.getFirstName() + "," + request.getLastName() + ":" + i);
+            greetingList.add(HELLO + request.getFirstName() + "," + request.getLastName() + ":" + i);
         }
 
         for (String greeting : greetingList) {
             HelloResponse response = HelloResponse.newBuilder()
                     .setGreeting(greeting)
                     .build();
+
             responseObserver.onNext(response);
         }
 
@@ -51,8 +55,7 @@ public class HelloServiceImpl extends HelloServiceGrpc.HelloServiceImplBase {
         return new StreamObserver<HelloRequest>() {
             @Override
             public void onNext(HelloRequest helloRequest) {
-                System.out.println(helloRequest.getFirstName() + "," + helloRequest.getLastName());
-                // 주의 : 여기서 responseObserver.onNext를 쓰면 biStream이 되버림
+                System.out.println(HELLO + helloRequest.getFirstName() + "," + helloRequest.getLastName());
             }
 
             @Override
@@ -75,7 +78,7 @@ public class HelloServiceImpl extends HelloServiceGrpc.HelloServiceImplBase {
         return new StreamObserver<HelloRequest>() {
             @Override
             public void onNext(HelloRequest helloRequest) {
-                String greeting = helloRequest.getFirstName() + "," + helloRequest.getLastName();
+                String greeting = HELLO + helloRequest.getFirstName() + "," + helloRequest.getLastName();
                 System.out.println(greeting);
 
                 responseObserver.onNext(HelloResponse.newBuilder().setGreeting(greeting+"1").build());
