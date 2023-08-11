@@ -1,0 +1,9 @@
+group = 'com.binghe'
+
+dependencies {
+    implementation project(':module-protocol')
+}
+
+jar {
+    enabled = false
+}
