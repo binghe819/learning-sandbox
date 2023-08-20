@@ -7,3 +7,24 @@ dependencies {
 jar {
     enabled = false
 }
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            credentials {
+                username = 'team_bmart_service_development'
+                password = 'market_client!!'
+            }
+
+            def releasesRepoUrl = 'https://nexus.baemin.in/repository/maven-release'
+            def snapshotsRepoUrl = 'https://nexus.baemin.in/repository/maven-snapshot'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
