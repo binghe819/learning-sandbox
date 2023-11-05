@@ -1,0 +1,15 @@
+
+;
+java:S5786"Remove this 'public' modifier.( ÙœÖ8Š´Ñı¹1
+N
+java:S5838*"1Use assertThat(actual).hasSize(expected) instead.(Ü²ÎÛ8‹´Ñı¹1
+N
+java:S5838?"1Use assertThat(actual).hasSize(expected) instead.(¸ú¦8‹´Ñı¹1
+V
+java:S5838S"9Use assertThat(actual).containsEntry(key, value) instead.(Áõ®¦8Œ´Ñı¹1
+U
+java:S5838T"9Use assertThat(actual).containsEntry(key, value) instead.(„ËÓb8Œ´Ñı¹1
+[
+java:S5838U"9Use assertThat(actual).containsEntry(key, value) instead.(¦ÜæÖùÿÿÿÿ8Œ´Ñı¹1
+7
+java:S5838e"Use isZero() instead.(¤¬ÂÕûÿÿÿÿ8Œ´Ñı¹1
