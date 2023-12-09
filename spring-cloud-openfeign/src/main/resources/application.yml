@@ -1,1 +1,3 @@
-
+external:
+  jsonplaceholder:
+    host: localhost:8080
