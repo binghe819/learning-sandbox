@@ -1,0 +1,8 @@
+
+g	java:S112"FDefine and throw a dedicated exception instead of using a generic one.(¡ÁÏòùÿÿÿÿ8éÍÂ„Ê1
+w
+java:S1488 "ZImmediately return this expression instead of assigning it to the temporary variable "ip".(ã¸Èå8„Â„Ê1
+L	java:S106"+Replace this use of System.out by a logger.(ùøÓóşÿÿÿÿ8ÁËÄ„Ê1
+L	java:S106"+Replace this use of System.out by a logger.(¼òÛ×ûÿÿÿÿ8ë¾Ë„Ê1
+L
+java:S2093"*Change this "try" to a try-with-resources.(¡»¢üùÿÿÿÿ8÷ÍÂ„Ê1
