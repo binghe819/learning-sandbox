@@ -45,7 +45,7 @@ public class Room {
 
         while (it.hasNext()) {
             try {
-                DataOutputStream out = (DataOutputStream) clientConnections.get(it.next()).getOut();
+                DataOutputStream out = new DataOutputStream(clientConnections.get(it.next()).getOut());
                 String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 out.writeUTF(now + " [" + sender.getName() + "] " + message);
             } catch (Exception e) {

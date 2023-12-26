@@ -10,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @AllArgsConstructor
 public class ChatServerService {
@@ -43,8 +42,7 @@ public class ChatServerService {
 
                 // 소켓 연결후 첫 통신으로 방 번호를 받아 접속한다.
                 String roomId = new DataInputStream(clientConnection.getIn()).readUTF();
-                Room room = findById(roomId)
-                        .orElse(new Room(roomId, roomId, new HashMap<>()));
+                Room room = findById(roomId);
 
                 room.add(clientConnection);
             }
@@ -54,9 +52,17 @@ public class ChatServerService {
         }
     }
 
-    private Optional<Room> findById(String roomId) {
-        return rooms.stream()
+    private Room findById(String roomId) {
+        Room room = rooms.stream()
                 .filter(it -> roomId.equals(it.getId()))
-                .findFirst();
+                .findFirst()
+                .orElse(null);
+
+        if (room == null) {
+            Room newRoom = new Room(roomId, roomId, new HashMap<>());
+            rooms.add(newRoom);
+            return newRoom;
+        }
+        return room;
     }
 }

@@ -1,8 +1,12 @@
 package com.binghe;
 
+import com.binghe.service.ChatClientService;
+
+import java.io.IOException;
+
 public class ChatClientApplication {
 
-    public static void main(String[] args) {
-        System.out.println("hello world!");
+    public static void main(String[] args) throws IOException {
+        new ChatClientService().startChatClient();
     }
 }

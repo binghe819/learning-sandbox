@@ -14,8 +14,8 @@ public class MsgReceiver implements Runnable {
     @Override
     public void run() {
         try {
-            OutputView.printServerText(clientConnection.getName() + "입장하셨습니다.");
-            OutputView.printServerText("현재 접속자 수 : " + room.getNumberOfClients());
+            OutputView.printServerText(clientConnection.getName() + " 입장하셨습니다.");
+            OutputView.printServerText("Room : " + room.getName() + ", 현재 접속자 수 : " + room.getNumberOfClients());
             room.sendToAll(clientConnection, " 입장하셨습니다.");
 
             DataInputStream dataInputStream = new DataInputStream(clientConnection.getIn());
@@ -25,10 +25,11 @@ public class MsgReceiver implements Runnable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            OutputView.printServerText(clientConnection.getName() + "님이 퇴장하셨습니다.");
+            OutputView.printServerText(clientConnection.getName() + "님이 에러 발생하여 퇴장하셨습니다.");
         } finally {
             room.sendToAll(clientConnection," 퇴장하셨습니다.");
             room.remove(clientConnection);
+            OutputView.printServerText("Room : " + room.getName() + ", 현재 접속자 수 : " + room.getNumberOfClients());
         }
     }
 }

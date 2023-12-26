@@ -1,3 +1,14 @@
 plugins {
     id 'java'
 }
+
+jar {
+    manifest {
+        attributes 'Version': version, 'Main-Class': 'com.binghe.ChatServerApplication'
+    }
+    from {
+        configurations.compileClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
