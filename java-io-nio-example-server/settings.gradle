@@ -1,0 +1,4 @@
+rootProject.name = 'java-io-nio-example-server'
+include 'example-client'
+include 'example-server'
+

@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+jar {
+    manifest {
+        attributes 'Version': version, 'Main-Class': 'com.binghe.ExampleClient'
+    }
+    from {
+        configurations.compileClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
