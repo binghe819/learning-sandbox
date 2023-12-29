@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 미완성.
  */
-public class NioNonBlockingSelectorChatServerApplication {
+public class NioNonBlockingSelectorServerApplication {
 
     private static final Map<SocketChannel, ByteBuffer> sockets = new ConcurrentHashMap<>();
 

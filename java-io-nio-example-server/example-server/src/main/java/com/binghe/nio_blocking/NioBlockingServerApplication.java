@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
-public class NioBlockingChatServerApplication {
+public class NioBlockingServerApplication {
 
     public static void main(String[] args) throws IOException {
         // 서버 생성
@@ -20,21 +20,20 @@ public class NioBlockingChatServerApplication {
             // NIO의 accept() 메서드도 blocking 된다.
             SocketChannel socket = serverSocket.accept();
 
-            handleChat(socket);
+            handleRequest(socket);
         }
     }
 
     // 소켓으로부터 읽고 작업을 수행한 다음 소켓에 다시 쓰기 작업을 수행한다.
-    private static void handleChat(SocketChannel socket) {
+    private static void handleRequest(SocketChannel socket) {
         // ByteBuffer는 NIO에서 데이터를 읽고 쓰는 작업을 수행할 때 사용하며, Direct 메서드 사용시 Native 메모리에 할당된다.
         // 단방향인 InputStream, OutputStream과는 다르게 양방향인 ByteBuffer는 읽기와 쓰기를 모두 수행할 수 있다.
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(80);
 
         try {
-            int data;
-            while ((data = socket.read(byteBuffer)) != -1) {
-                // 소켓으로부터 데이터를 읽는다.
-                byteBuffer.flip(); // 읽기 모드로 전환. (position을 0으로 세팅한다.)
+            while (socket.read(byteBuffer) != -1) {
+                // 소켓으로부터 읽은 데이터를 쓰기위해 flip()
+                byteBuffer.flip(); // position을 0으로 세팅한다. limit은 읽은 데이터 크기만큼.
 
                 // 작업을 수행한다. (대문자 변환)
                 toUpperCase(byteBuffer);

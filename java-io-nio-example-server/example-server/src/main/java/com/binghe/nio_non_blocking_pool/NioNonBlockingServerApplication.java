@@ -12,13 +12,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Nio Bad Practice (ByteBuffer를 이해하는데 좋은 예시)
  */
-public class NioNonBlockingChatServerApplication {
+public class NioNonBlockingServerApplication {
 
     public static void main(String[] args) throws IOException {
         // 서버 생성
         ServerSocketChannel serverSocket = ServerSocketChannel.open();
-
-        // 서버를 8080 포트에 바인딩.
         serverSocket.bind(new InetSocketAddress(8080));
 
         // Non-Blocking 모드로 전환한다.
@@ -29,9 +27,10 @@ public class NioNonBlockingChatServerApplication {
 
         while (true) {
             // 여기서 accept()는 들어오는 연결 요청을 수락한다는 의미이다.
+            // Non-Blocking 모드이기에 accept() 메서드는 blocking 되지 않고, null을 리턴한다.
             SocketChannel socket = serverSocket.accept();
-            // Non-Blocking 모드이기에 위 accept() 메서드는 blocking 되지 않고, null을 리턴한다.
 
+            // 새로운 소켓이 연결된 경우
             if (socket != null) {
                 // 연결된 Socket을 Non-Blocking하게 처리하겠다는 의미.
                 socket.configureBlocking(false);

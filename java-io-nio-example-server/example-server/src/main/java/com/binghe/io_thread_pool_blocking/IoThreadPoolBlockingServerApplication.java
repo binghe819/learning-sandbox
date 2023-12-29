@@ -1,4 +1,4 @@
-package com.binghe.io_simple_blocking;
+package com.binghe.io_thread_pool_blocking;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -6,27 +6,25 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-/**
- * 첫번째. 간단한 블로킹 채팅 서버 - 메인 스레드가 모든 작업을 처리한다.
- *
- * - 장점: 구현이 간단하고, 코드가 쉽다.
- * - 단점: 메인스레드가 소켓 입출력 작업을 처리하기 때문에, 클라이언트 하나만 접속할 수 있다. 사실상 채팅 서버 역할을 수행하지 못한다.
- */
-public class IoSimpleBlockingChatServerApplication {
+public class IoThreadPoolBlockingServerApplication {
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = new ServerSocket(8080);
+        ExecutorService threadPool = Executors.newFixedThreadPool(3);
 
         while (true) {
             // blocking call (새로운 클라이언트가 접속할 때까지 blocking 된다.)
             Socket socket = serverSocket.accept();
 
-            handleChat(socket);
+            // 스레드 풀 개수인 3개이상 소켓 연결이 안된다.
+            threadPool.submit(() -> handleRequest(socket));
         }
     }
 
-    private static void handleChat(Socket socket) {
+    private static void handleRequest(Socket socket) {
         try (InputStream in = socket.getInputStream();
              OutputStream out = socket.getOutputStream()) {
             int data;
