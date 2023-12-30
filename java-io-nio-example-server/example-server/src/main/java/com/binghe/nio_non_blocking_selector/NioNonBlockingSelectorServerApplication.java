@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
@@ -13,9 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 미완성.
- */
 public class NioNonBlockingSelectorServerApplication {
 
     private static final Map<SocketChannel, ByteBuffer> sockets = new ConcurrentHashMap<>();
@@ -47,9 +45,6 @@ public class NioNonBlockingSelectorServerApplication {
                 for (Iterator<SelectionKey> it = selectionKeys.iterator(); it.hasNext(); ) {
                     SelectionKey key = it.next();
 
-                    // 동일한 key가 두번 이상 처리되지않도록, 한번 처리한 key는 제거한다.
-                    it.remove();
-
                     try {
                         if (key.isValid()) {
                             if (key.isAcceptable()) {
@@ -60,9 +55,14 @@ public class NioNonBlockingSelectorServerApplication {
                                 handleWriteEvent(key); // 쓰기 이벤트가 발생한 경우
                             }
                         }
+                    } catch (ClosedChannelException e) {
+                        closeSocket((SocketChannel) key.channel());
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
+
+                    // 동일한 key가 두번 이상 처리되지않도록, 한번 처리한 key는 Iterator에서 제거한다.
+                    it.remove();
                 }
             }
 
@@ -99,7 +99,6 @@ public class NioNonBlockingSelectorServerApplication {
 
         // 작업을 수행한다. (대문자 변환)
         toUpperCase(byteBuffer);
-        System.out.println("read test");
 
         socket.configureBlocking(false);
 
@@ -107,18 +106,12 @@ public class NioNonBlockingSelectorServerApplication {
     }
 
     private static void handleWriteEvent(SelectionKey key) throws IOException {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println("write test");
-
         SocketChannel socket = (SocketChannel) key.channel();
         ByteBuffer byteBuffer = sockets.get(socket);
 
         socket.write(byteBuffer);
+
+        // 전부 다 write한 경우
         while (!byteBuffer.hasRemaining()) {
             byteBuffer.compact();
             key.interestOps(SelectionKey.OP_READ);
