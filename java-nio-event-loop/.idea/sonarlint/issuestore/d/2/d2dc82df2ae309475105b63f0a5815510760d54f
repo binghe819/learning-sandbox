@@ -1,0 +1,11 @@
+
+W
+java:S11410"5Extract this nested try block into a separate method.(¡»¢üùÿÿÿÿ8÷Ú÷¤Ì1
+s
+java:S2095"QUse try-with-resources or close this "ServerSocketChannel" in a "finally" clause.(þìªáúÿÿÿÿ8ÓÝ÷¤Ì1
+D
+java:S2189&""Add an end condition to this loop.(˜ïˆžÿÿÿÿÿ8ÔÝ÷¤Ì1
+o
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 19 to the 15 allowed.(œû¿Ø8ÙÝ÷¤Ì1
+J
+java:S1481$"-Remove this unused "register" local variable.(üÇ„Æ8ÛÝ÷¤Ì1
