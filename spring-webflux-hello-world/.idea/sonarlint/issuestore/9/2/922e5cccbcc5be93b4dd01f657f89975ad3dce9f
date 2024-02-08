@@ -1,0 +1,4 @@
+
+]
+java:S1612	"@Replace this lambda with method reference 'System.out::println'.(ÀÄÊÑ8¡ö®¼Ø1
+G	java:S106	"+Replace this use of System.out by a logger.(ÀÄÊÑ8¡ö®¼Ø1
