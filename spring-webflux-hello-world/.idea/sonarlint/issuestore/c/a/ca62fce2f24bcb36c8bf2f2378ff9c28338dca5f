@@ -1,0 +1,6 @@
+
+b
+java:S1612"@Replace this lambda with method reference 'String::toLowerCase'.(êëÜŸûÿÿÿÿ8Şè¤Ø1
+]
+java:S1612"@Replace this lambda with method reference 'System.out::println'.(ÀÄÊÑ8ŸŞè¤Ø1
+G	java:S106"+Replace this use of System.out by a logger.(ÀÄÊÑ8 Şè¤Ø1
