@@ -1,10 +1,11 @@
-package com.binghe.blocking.server;
+package com.binghe.non_blocking.server;
 
 import com.binghe.thrift.CalculatorService;
 import com.binghe.thrift.CalculatorServiceImpl;
+import org.apache.thrift.server.TNonblockingServer;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.server.TThreadPoolServer;
-import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TNonblockingServerSocket;
+import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,23 +16,18 @@ public class ServerRunner {
 
     public static void main(String[] args) {
         try {
-            // Transport
-            TServerSocket serverTransport = new TServerSocket(8080);
+            TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(8080);
 
-            // Processor
             CalculatorService.Processor processor = new CalculatorService.Processor(new CalculatorServiceImpl());
 
-            // Server
-            TServer server = new TThreadPoolServer(
-                    new TThreadPoolServer.Args(serverTransport)
-                            .processor(processor)
-            );
+            TServer server = new TNonblockingServer(new TNonblockingServer.Args(serverTransport).
+                    processor(processor));
 
             log.info("[server] Starting server on port : 8080");
 
             server.serve();
         } catch (TTransportException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 }
