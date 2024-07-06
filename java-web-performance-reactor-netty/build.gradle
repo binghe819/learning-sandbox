@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.binghe'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation 'io.projectreactor.netty:reactor-netty:1.1.20'
+
+    implementation 'org.slf4j:slf4j-api:2.0.6'
+    implementation ('ch.qos.logback:logback-classic:1.4.5') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
+
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
