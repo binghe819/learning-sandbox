@@ -1,0 +1,4 @@
+rootProject.name = 'java-kafka-client-example'
+include 'kafka-producer'
+include 'kafka-consumer'
+
