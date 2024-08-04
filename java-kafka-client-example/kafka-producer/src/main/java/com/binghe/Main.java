@@ -17,7 +17,7 @@ public class Main {
 
         try {
             for (int i = 0; i < 5; i++) {
-                ProducerRecord<String, String> producerRecord = new ProducerRecord<>("Football-No" + i, "A team Player .... in " + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<>("com.binghe.FootballBroadCast", "key" + i, "A team Player .... in " + LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
                 sender.sendSync(producerRecord);
             }
         } finally {
