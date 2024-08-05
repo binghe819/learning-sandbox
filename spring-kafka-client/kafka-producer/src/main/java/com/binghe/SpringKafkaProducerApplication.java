@@ -1,13 +1,11 @@
-package com.binghe.springkafkaclient;
+package com.binghe;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringKafkaClientApplication {
-
+public class SpringKafkaProducerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SpringKafkaClientApplication.class, args);
+        SpringApplication.run(SpringKafkaProducerApplication.class, args);
     }
-
 }

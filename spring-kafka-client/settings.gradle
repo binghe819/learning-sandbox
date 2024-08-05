@@ -1,1 +1,3 @@
 rootProject.name = 'spring-kafka-client'
+include 'kafka-producer'
+include 'kafka-consumer'
