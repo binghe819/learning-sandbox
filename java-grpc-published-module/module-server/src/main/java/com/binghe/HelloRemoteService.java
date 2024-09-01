@@ -4,11 +4,15 @@ import com.binghe.proto.HelloRequest;
 import com.binghe.proto.HelloResponse;
 import com.binghe.proto.HelloServiceGrpc;
 import io.grpc.stub.StreamObserver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HelloRemoteService extends HelloServiceGrpc.HelloServiceImplBase {
+
+    private static final Logger log = LoggerFactory.getLogger(HelloRemoteService.class);
 
     private static final String HELLO = "Hello ! ";
 
@@ -18,7 +22,7 @@ public class HelloRemoteService extends HelloServiceGrpc.HelloServiceImplBase {
 
         String greeting = HELLO + request.getFirstName() + "," + request.getLastName();
 
-        System.out.printf("[server logging]" + greeting + "\n");
+        log.info("[server logging] {}", greeting);
 
         HelloResponse response = HelloResponse.newBuilder()
                 .setGreeting(greeting)
@@ -45,6 +49,7 @@ public class HelloRemoteService extends HelloServiceGrpc.HelloServiceImplBase {
                     .build();
 
             responseObserver.onNext(response);
+            log.info("[server logging] server stream - send to client. message: {}", response);
         }
 
         responseObserver.onCompleted();
@@ -62,7 +67,7 @@ public class HelloRemoteService extends HelloServiceGrpc.HelloServiceImplBase {
 
             @Override
             public void onError(Throwable throwable) {
-                System.out.println("error");
+                log.error("[server logging] error - {}", throwable.toString());
             }
 
             @Override
@@ -89,7 +94,7 @@ public class HelloRemoteService extends HelloServiceGrpc.HelloServiceImplBase {
 
             @Override
             public void onError(Throwable throwable) {
-                System.out.println("error");
+                log.error("[server logging] error - {}", throwable.toString());
             }
 
             @Override
