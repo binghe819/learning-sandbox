@@ -3,14 +3,14 @@ package com.binghe
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.awaitOneOrNull
 
-class MemberRepository(private val client: DatabaseClient) {
+class MemberCoroutineRepository(private val client: DatabaseClient) {
 
-    suspend fun findById(id: Long): Member? =
-        client
-            .sql("SELECT * FROM members WHERE id = :id")
-            .bind("id", id)
-            .mapValue(Member.class)
-            .awaitOneOrNull()
+//    suspend fun findById(id: Long): Member? =
+//        client
+//            .sql("SELECT * FROM members WHERE id = :id")
+//            .bind("id", id)
+//            .mapValue(Member.class)
+//            .awaitOneOrNull()
 }
 
 //class UserRepository(private val client: DatabaseClient) {

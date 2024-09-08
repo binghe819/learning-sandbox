@@ -1,0 +1,14 @@
+spring:
+  r2dbc:
+    url: r2dbc:mysql://127.0.0.1:3306/test?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+    username: root
+    password: 1234
+  netty:
+    leak-detection:
+      level: paranoid
+    allocator: pooled
+#  pool:
+#    enabled: true
+#    initial-size: 50
+#    max-size: 50
+
