@@ -21,7 +21,7 @@ public class UnaryProcessService {
     public void helloUnarySync(HelloRequest request, StreamObserver<HelloResponse> responseObserver) {
         String greeting = HELLO + request.getFirstName() + "," + request.getLastName();
 
-        sleep(3000);
+//        sleep(3000);
 
         log.info("[server logging] {}", greeting);
 
