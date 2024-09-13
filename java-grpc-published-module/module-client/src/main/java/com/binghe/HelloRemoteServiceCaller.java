@@ -60,7 +60,7 @@ public class HelloRemoteServiceCaller {
         ListenableFuture<HelloResponse> future = futureStub.hello(request);
         HelloResponse response = null;
         try {
-            response = future.get(2, TimeUnit.SECONDS);
+            response = future.get(10000, TimeUnit.SECONDS);
         } catch (Exception e) {
             e.printStackTrace();
         }

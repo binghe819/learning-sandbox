@@ -16,20 +16,16 @@ public class HelloRemoteService extends HelloServiceGrpc.HelloServiceImplBase {
 
     private static final String HELLO = "Hello ! ";
 
+    private final UnaryProcessService unaryProcessService;
+
+    public HelloRemoteService() {
+        this.unaryProcessService = new UnaryProcessService();
+    }
+
     // unary
     @Override
     public void hello(HelloRequest request, StreamObserver<HelloResponse> responseObserver) {
-
-        String greeting = HELLO + request.getFirstName() + "," + request.getLastName();
-
-        log.info("[server logging] {}", greeting);
-
-        HelloResponse response = HelloResponse.newBuilder()
-                .setGreeting(greeting)
-                .build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        unaryProcessService.helloUnarySync(request, responseObserver);
     }
 
     // server stream

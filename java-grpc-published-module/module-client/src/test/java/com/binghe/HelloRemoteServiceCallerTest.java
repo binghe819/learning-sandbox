@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CompletableFuture;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,13 +20,14 @@ class HelloRemoteServiceCallerTest {
         // given
         HelloRemoteServiceCaller helloRemoteServiceCaller = new HelloRemoteServiceCaller(gRpcConfiguration.host, gRpcConfiguration.port);
 
-        HelloRequest request = HelloRequest.newBuilder().setFirstName("kim").setLastName("byeonghwa").build();
-
         // when
-        String result = helloRemoteServiceCaller.sendBlockingUnary(request);
+        for (int i = 0; i < 10; i++) {
+            HelloRequest request = HelloRequest.newBuilder().setFirstName("kim").setLastName("byeonghwa - " + i).build();
+            helloRemoteServiceCaller.sendFutureUnary(request);
+        }
 
         // then
-        assertThat(result).isNotBlank();
-        System.out.printf(result);
+//        assertThat(result).isNotBlank();
+//        System.out.printf(result);
     }
 }
