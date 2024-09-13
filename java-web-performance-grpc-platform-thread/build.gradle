@@ -1,19 +1,44 @@
-plugins {
-    id 'java'
-}
-
-group = 'com.binghe'
-version = '1.0-SNAPSHOT'
+group = "com.binghe"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.10.0')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: "maven-publish"
 
-test {
-    useJUnitPlatform()
+    sourceCompatibility = JavaVersion.VERSION_21
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        runtimeOnly 'io.grpc:grpc-netty-shaded:1.57.1'
+        implementation 'io.grpc:grpc-protobuf:1.57.1'
+        implementation 'io.grpc:grpc-stub:1.57.1'
+        implementation 'org.slf4j:slf4j-api:2.0.6'
+        implementation ('ch.qos.logback:logback-classic:1.4.5') {
+            exclude group: 'org.slf4j', module: 'slf4j-api'
+        }
+
+        compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+        testImplementation 'org.assertj:assertj-core:3.15.0'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
 }

@@ -1,0 +1,30 @@
+group = 'com.binghe'
+
+dependencies {
+    implementation project(':grpc-protocol')
+}
+
+jar {
+    enabled = false
+}
+
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            from components.java
+//        }
+//    }
+//
+//    repositories {
+//        maven {
+//            credentials {
+//                username = 'username'
+//                password = 'password'
+//            }
+//
+//            def releasesRepoUrl = '..'
+//            def snapshotsRepoUrl = '..'
+//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//        }
+//    }
+//}

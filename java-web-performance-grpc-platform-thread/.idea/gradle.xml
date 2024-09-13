@@ -8,6 +8,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/grpc-client" />
+            <option value="$PROJECT_DIR$/grpc-protocol" />
+            <option value="$PROJECT_DIR$/grpc-server" />
           </set>
         </option>
       </GradleProjectSettings>

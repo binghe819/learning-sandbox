@@ -1,2 +1,5 @@
 rootProject.name = 'java-web-performance-grpc-platform-thread'
+include 'grpc-client'
+include 'grpc-protocol'
+include 'grpc-server'
 
