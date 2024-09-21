@@ -1,5 +1,6 @@
 import com.binghe.proto.HelloRequest
 import io.grpc.ManagedChannelBuilder
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 
@@ -22,8 +23,11 @@ class HelloServiceClientTest {
 
         // when
         runBlocking {
-            val hello = client.hello(request)
-            println(hello)
+
+            for (i in 1..100) {
+                val hello = client.hello(request)
+            }
+            delay(100_000)
         }
     }
 }
