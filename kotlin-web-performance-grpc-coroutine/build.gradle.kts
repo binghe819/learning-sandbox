@@ -19,10 +19,17 @@ subprojects {
         mavenCentral()
     }
 
+    val grpcVersion = "3.19.4"
+    val grpcKotlinVersion = "1.2.1"
+    val grpcProtoVersion = "1.44.1"
+
     dependencies {
-        implementation("io.grpc:grpc-kotlin-stub:1.4.1")
-        implementation("io.grpc:grpc-protobuf:1.57.1")
-        implementation("com.google.protobuf:protobuf-kotlin:4.27.2")
+        implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
+        implementation("io.grpc:grpc-protobuf:$grpcProtoVersion")
+        implementation("io.grpc:grpc-stub:$grpcProtoVersion")
+        implementation("io.grpc:grpc-netty-shaded:$grpcProtoVersion")
+        implementation("com.google.protobuf:protobuf-kotlin:$grpcVersion")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
 
         testImplementation(kotlin("test"))
     }

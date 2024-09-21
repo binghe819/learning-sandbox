@@ -1,3 +1,7 @@
 fun main() {
-    println("Hello World")
+    val address = "localhost"
+    val port = 9090
+    val server = HelloWorldServer(address, port)
+    server.start()
+    server.blockUntilShutdown()
 }
