@@ -1,12 +1,18 @@
+import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.grpc.Server
 import io.grpc.ServerBuilder
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class HelloWorldServer(private val address: String, private val port: Int) {
+
+    val threadPool: ExecutorService = Executors.newFixedThreadPool(100, ThreadFactoryBuilder().setNameFormat("rpc-server-executor-%d").build())
 
     val server: Server =
         ServerBuilder
             .forPort(port)
             .addService(HelloWorldService())
+            .executor(threadPool)
             .build()
 
     fun start() {
