@@ -15,6 +15,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'net.devh:grpc-server-spring-boot-starter:2.15.0.RELEASE'
     implementation project(":grpc-idl")
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'com.mysql:mysql-connector-j:8.4.0'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
