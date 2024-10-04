@@ -4,9 +4,9 @@ package com.binghe.com.binghe.hello
 import com.binghe.proto.HelloRequest
 import com.binghe.proto.HelloResponse
 import com.binghe.proto.HelloServiceGrpcKt.HelloServiceCoroutineImplBase
-import net.devh.boot.grpc.server.service.GrpcService
+import org.lognet.springboot.grpc.GRpcService
 
-@GrpcService
+@GRpcService
 class HelloGrpcService : HelloServiceCoroutineImplBase() {
 
     override suspend fun hello(request: HelloRequest): HelloResponse {

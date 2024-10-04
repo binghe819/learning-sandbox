@@ -2,8 +2,6 @@ syntax = "proto3";
 option java_multiple_files = true;
 option java_package = "com.binghe.proto";
 
-package member;
-
 message GetMemberRequest {
   int64 id = 1;
 }
@@ -17,7 +15,4 @@ message GetMemberResponse {
 
 service MemberGrpcService {
   rpc getMember(GetMemberRequest) returns (GetMemberResponse);
-  rpc getMemberServerStream(GetMemberRequest) returns (stream GetMemberResponse);
-  rpc getMemberClientStream(stream GetMemberRequest) returns (GetMemberResponse);
-  rpc getMemeberBiStream(stream GetMemberRequest) returns (stream GetMemberResponse);
 }

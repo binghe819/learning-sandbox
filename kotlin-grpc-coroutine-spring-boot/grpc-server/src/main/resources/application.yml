@@ -1,6 +1,7 @@
-grpc:
-  server:
-    port: 9090
+#grpc:
+#  server:
+#    port: 9090
+
 
 spring:
   r2dbc:
@@ -15,3 +16,7 @@ spring:
     leak-detection:
       level: paranoid
     allocator: pooled
+
+grpc:
+  enable-reflection: true
+  port: 9090

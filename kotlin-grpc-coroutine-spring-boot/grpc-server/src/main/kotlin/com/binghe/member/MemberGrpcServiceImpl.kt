@@ -4,9 +4,9 @@ import com.binghe.MemberService
 import com.binghe.proto.GetMemberRequest
 import com.binghe.proto.GetMemberResponse
 import com.binghe.proto.MemberGrpcServiceGrpcKt
-import net.devh.boot.grpc.server.service.GrpcService
+import org.lognet.springboot.grpc.GRpcService
 
-@GrpcService
+@GRpcService
 class MemberGrpcServiceImpl(private val memberService: MemberService) : MemberGrpcServiceGrpcKt.MemberGrpcServiceCoroutineImplBase() {
 
     override suspend fun getMember(request: GetMemberRequest): GetMemberResponse {

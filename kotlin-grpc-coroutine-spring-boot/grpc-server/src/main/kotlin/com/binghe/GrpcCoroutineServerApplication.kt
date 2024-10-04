@@ -1,4 +1,4 @@
-package com.binghe.com.binghe
+package com.binghe
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

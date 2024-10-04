@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.24"
     id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.5"
+    id("io.github.lognet.grpc-spring-boot") version "5.1.5"
 }
 
 val grpcVersion = "3.19.4"
@@ -16,7 +17,8 @@ repositories {
 dependencies {
     implementation(project(":grpc-protocol"))
     implementation("org.springframework.boot:spring-boot-starter")
-    implementation("net.devh:grpc-server-spring-boot-starter:2.15.0.RELEASE")
+//    implementation("net.devh:grpc-server-spring-boot-starter:2.15.0.RELEASE")
+    implementation ("io.github.lognet:grpc-spring-boot-starter:5.1.5")
     implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
