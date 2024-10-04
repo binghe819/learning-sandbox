@@ -22,16 +22,16 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
 }
 
-sourceSets{
-    getByName("main"){
-        java {
-            srcDirs(
-                "build/generated/source/proto/main/java",
-                "build/generated/source/proto/main/kotlin"
-            )
-        }
-    }
-}
+//sourceSets{
+//    getByName("main"){
+//        java {
+//            srcDirs(
+//                "build/generated/source/proto/main/java",
+//                "build/generated/source/proto/main/kotlin"
+//            )
+//        }
+//    }
+//}
 
 protobuf {
     protoc {
@@ -62,5 +62,5 @@ tasks.test {
     useJUnitPlatform()
 }
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(21)
 }
