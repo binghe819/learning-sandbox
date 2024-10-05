@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 class GrpcClientServiceTest {
 
-    @Disabled
+//    @Disabled
     @Test
     void hello_blocking_call() {
         GrpcClientService helloRemoteServiceCaller = new GrpcClientService();
@@ -29,7 +29,7 @@ class GrpcClientServiceTest {
         Long id = 2L;
 
         // when
-        GetMemberRequest request = GetMemberRequest.newBuilder().setId(Math.toIntExact(id)).build();
+        GetMemberRequest request = GetMemberRequest.newBuilder().setId(id).build();
         GetMemberResponse member = grpcClientService.getMember(request);
 
         // then

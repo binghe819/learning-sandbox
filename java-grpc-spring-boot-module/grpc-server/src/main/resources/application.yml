@@ -4,7 +4,7 @@ grpc:
 
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/test?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+    url: jdbc:mysql://43.201.34.164:3306/test?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
