@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataSource name="@localhost">
+<dataSource name="ec2-mysql">
   <database-model serializer="dbm" dbms="MYSQL" family-id="MYSQL" format-version="4.52">
     <root id="1">
       <DefaultCasing>exact</DefaultCasing>
@@ -1082,7 +1082,6 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="292" parent="1" name="test">
-      <LastIntrospectionLocalTimestamp>2024-10-05.09:21:03</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_bin</CollationName>
     </schema>
     <user id="293" parent="1" name="mysql.infoschema">
