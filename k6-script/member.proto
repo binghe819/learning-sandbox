@@ -1,0 +1,18 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.binghe.proto";
+
+message GetMemberRequest {
+  int64 id = 1;
+}
+
+message GetMemberResponse {
+  int64 id = 1;
+  string name = 2;
+  int32 age = 3;
+  string description = 4;
+}
+
+service MemberGrpcService {
+  rpc getMember(GetMemberRequest) returns (GetMemberResponse);
+}

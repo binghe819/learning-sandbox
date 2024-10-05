@@ -19,5 +19,5 @@ export default function() {
 
     http.get(getUrl);
 
-    // sleep(1);
+    sleep(1);
 }

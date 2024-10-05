@@ -8,8 +8,8 @@ client.load (
 );
 
 export const options = {
-    vus: 30,
-    duration: "3s",
+    vus: 1000,
+    duration: "10s",
 }
 
 export default () => {
@@ -28,7 +28,7 @@ export default () => {
   console.log(JSON.stringify(response.message));
 
   client.close();
-  // sleep(1);
+  sleep(0.5);
 };
 
 
