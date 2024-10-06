@@ -18,13 +18,13 @@ dependencies {
     implementation(project(":grpc-protocol"))
     implementation("org.springframework.boot:spring-boot-starter")
 //    implementation("net.devh:grpc-server-spring-boot-starter:2.15.0.RELEASE")
-    implementation ("io.github.lognet:grpc-spring-boot-starter:5.1.5")
-    implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation ("io.github.lognet:grpc-spring-boot-starter:5.1.5") // grpc - spring 연결다리
+    implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion") // grpc - kotlin 연결다리
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2") // coroutine
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor") // coroutine - reactor 연결다리
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc") // r2dbc
     implementation("io.asyncer:r2dbc-mysql")
 
     runtimeOnly("com.mysql:mysql-connector-j")
