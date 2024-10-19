@@ -38,6 +38,9 @@ dependencies {
     // stopwatch
     implementation 'org.apache.commons:commons-lang3:3.17.0'
 
+    // protobuf
+    implementation 'com.google.protobuf:protobuf-java:4.28.2'
+
     implementation 'javax.annotation:javax.annotation-api:1.3.2'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     testImplementation platform('org.junit:junit-bom:5.10.0')

@@ -28,4 +28,28 @@ public class DataSetFactory {
         }
         return new com.binghe.thrift.LargeObject(1L, "binghe", smallObjects);
     }
+
+    public static com.binghe.proto.SmallObject createSmallObjectProto() {
+        return com.binghe.proto.SmallObject.newBuilder()
+                .setId(1L)
+                .setName("binghe")
+                .setActive(true)
+                .build();
+    }
+
+    public static com.binghe.proto.LargeObject createLargeObjectProto() {
+        com.binghe.proto.LargeObject.Builder builder = com.binghe.proto.LargeObject.newBuilder()
+                .setId(1L)
+                .setName("binghe");
+        for (int i = 0; i <= 1000; i++) {
+            com.binghe.proto.SmallObject smallObject = com.binghe.proto.SmallObject.newBuilder()
+                    .setId(i)
+                    .setName("binghe")
+                    .setActive(true)
+                    .build();
+
+            builder.addSmallObjects(i, smallObject);
+        }
+        return builder.build();
+    }
 }
