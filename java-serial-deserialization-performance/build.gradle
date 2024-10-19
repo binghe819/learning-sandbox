@@ -9,7 +9,37 @@ repositories {
     mavenCentral()
 }
 
+version = '11'
+
 dependencies {
+    // jack
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.0'
+
+    // msgpack
+    implementation 'org.msgpack:jackson-dataformat-msgpack:0.9.8'
+
+    // protostuff
+    implementation 'io.protostuff:protostuff-core:1.8.0'
+    implementation 'io.protostuff:protostuff-runtime:1.8.0'
+    implementation 'io.protostuff:protostuff-api:1.8.0'
+
+    // bson
+    implementation 'de.undercouch:bson4jackson:2.15.1'
+
+    // avro
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-avro:2.18.0'
+
+    // xml
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.0'
+
+    // thrift
+    implementation("org.apache.thrift:libthrift:0.21.0")
+
+    // stopwatch
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
+
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
