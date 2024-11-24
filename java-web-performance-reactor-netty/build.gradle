@@ -17,6 +17,7 @@ configurations {
 
 dependencies {
     implementation 'io.projectreactor.netty:reactor-netty:1.1.20'
+    implementation("io.netty:netty-resolver-dns-native-macos:4.1.75.Final:osx-aarch_64")
 
     implementation 'org.slf4j:slf4j-api:2.0.6'
     implementation ('ch.qos.logback:logback-classic:1.4.5') {
