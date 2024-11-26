@@ -3,6 +3,8 @@ package com.binghe;
 import com.binghe.proto.GetMemberRequest;
 import com.binghe.proto.GetMemberResponse;
 import com.binghe.proto.HelloRequest;
+import com.binghe.proto.KeyValueRequest;
+import com.binghe.proto.KeyValueResponse;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -34,5 +36,23 @@ class GrpcClientServiceTest {
 
         // then
         System.out.println(member.getDescription());
+    }
+
+    @Test
+    void keyvalue_call() {
+        // given
+        GrpcClientService grpcClientService = new GrpcClientService();
+
+        String key = "binghe";
+
+        KeyValueRequest request = KeyValueRequest.newBuilder()
+                .setKey(key)
+                .build();
+
+        // when
+        KeyValueResponse value = grpcClientService.getValue(request);
+
+        // then
+        System.out.println(value);
     }
 }

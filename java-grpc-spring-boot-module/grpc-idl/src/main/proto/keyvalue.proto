@@ -1,0 +1,16 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.binghe.proto";
+
+message KeyValueRequest {
+  string key = 1;
+}
+
+message KeyValueResponse {
+  string key = 1;
+  string value = 2;
+}
+
+service KeyValueService {
+  rpc getValueByKey(KeyValueRequest) returns (KeyValueResponse);
+}

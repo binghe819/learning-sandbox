@@ -1,0 +1,15 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "com.binghe.proto";
+
+message SmallObject {
+  int64 id = 1;
+  string name = 2;
+  bool active = 3;
+}
+
+message LargeObject {
+  int64 id = 1;
+  string name = 2;
+  repeated SmallObject smallObjects = 3;
+}

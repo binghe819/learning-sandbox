@@ -1,6 +1,13 @@
 package com.binghe;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import io.grpc.Codec;
+import io.grpc.CompressorRegistry;
+import io.grpc.DecompressorRegistry;
+import io.grpc.Metadata;
+import io.grpc.ServerCall;
+import io.grpc.ServerCallHandler;
+import io.grpc.ServerInterceptor;
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
 import net.devh.boot.grpc.server.serverfactory.GrpcServerConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -21,10 +28,27 @@ public class GrpcServerConfiguration {
     @Bean
     public GrpcServerConfigurer keepAliveServerConfigurer() {
         return serverBuilder -> {
+            CompressorRegistry compressorRegistry = CompressorRegistry.newEmptyInstance();
+            compressorRegistry.register(new Codec.Gzip());
+
+            DecompressorRegistry decompressorRegistry = DecompressorRegistry.emptyInstance();
+            decompressorRegistry.with(new Codec.Gzip(), true);
+
+//            new CompressorRegistry()
+
             if (serverBuilder instanceof NettyServerBuilder) {
                 ((NettyServerBuilder) serverBuilder)
-                        .keepAliveTime(30, TimeUnit.SECONDS)
+                        .keepAliveTime(180, TimeUnit.SECONDS)
                         .keepAliveTimeout(5, TimeUnit.SECONDS)
+                        .compressorRegistry(compressorRegistry)
+                        .decompressorRegistry(decompressorRegistry)
+                        .intercept(new ServerInterceptor() {
+                            @Override
+                            public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(ServerCall<ReqT, RespT> serverCall, Metadata metadata, ServerCallHandler<ReqT, RespT> serverCallHandler) {
+                                serverCall.setCompression("gzip");
+                                return serverCallHandler.startCall(serverCall, metadata);
+                            }
+                        })
 //                        .executor(threadPool())
                         .permitKeepAliveWithoutCalls(true);
             }
