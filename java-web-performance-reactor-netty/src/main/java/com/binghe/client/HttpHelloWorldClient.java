@@ -10,8 +10,10 @@ public class HttpHelloWorldClient {
     public static void main(String[] args) {
         // HttpClient (ClientTransport)
         HttpClient httpClient = HttpClient.create()
-                .bindAddress(() -> new InetSocketAddress("127.0.0.1", 8080))
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
+//                .bindAddress(() -> new InetSocketAddress("127.0.0.1", 8080))
+//                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
+                .host("127.0.0.1")
+                .port(8080);
 
         String getHelloWorldResponse = getHelloWorld(httpClient);
         System.out.println(getHelloWorldResponse);
