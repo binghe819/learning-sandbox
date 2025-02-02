@@ -20,4 +20,9 @@ public class Count {
     public void countFindIdsCount() {
         this.findByIdsCount++;
     }
+
+    public void reset() {
+        this.findByIdsCount = 0;
+        this.findByIdCount = 0;
+    }
 }

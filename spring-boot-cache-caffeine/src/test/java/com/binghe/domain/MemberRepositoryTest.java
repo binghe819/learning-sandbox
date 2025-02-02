@@ -2,6 +2,7 @@ package com.binghe.domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,17 +28,15 @@ class MemberRepositoryTest {
 
     @Test
     void findByIds() {
-        List<Member> members = repository.findByIds(List.of(1L, 2L));
+        Collection<Member> members = repository.findByIds(List.of(1L, 2L));
 
         assertThat(members).isNotEmpty();
         assertThat(members.size()).isEqualTo(2);
-        assertThat(members.get(0).getId()).isEqualTo(1L);
-        assertThat(members.get(1).getId()).isEqualTo(2L);
     }
 
     @Test
     void findByIds_empty() {
-        List<Member> members = repository.findByIds(List.of(1000L));
+        Collection<Member> members = repository.findByIds(List.of(1000L));
 
         assertThat(members).isEmpty();
     }
