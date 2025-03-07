@@ -1,48 +1,37 @@
 package com.binghe.domain;
 
-import com.binghe.config.TestDatabaseConfig;
-import org.junit.jupiter.api.BeforeEach;
+import com.binghe.integration.IntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
-@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@Import(TestDatabaseConfig.class)
-@ActiveProfiles("test")
-class MemberRepositoryTest {
+class MemberRepositoryTest extends IntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
 
-    @BeforeEach
-    public void setup() {
-//        memberRepository.deleteAll(); // Clear database before each test
-    }
-
     @Test
     public void testSaveAndFindById() {
+        System.out.println("testSaveAndFindById");
         Member member = new Member("binghe", "binghe address", "binghe description");
         memberRepository.save(member);
 
-        // deleteAll로는 1L이면 다른 테스트 실행후 이 테스트 실행시 실패함.
+        // 테스트 격리를 하지 않으면 다른 테스트 실행후 이 테스트 실행시 실패함.
         Member foundMember = memberRepository.findById(1L).orElse(null);
         assertThat(foundMember).isNotNull();
         assertThat(foundMember.getName()).isEqualTo(member.getName());
         assertThat(foundMember.getAddress()).isEqualTo(member.getAddress());
         assertThat(foundMember.getDescription()).isEqualTo(member.getDescription());
+
+        System.out.println("testSaveAndFindById finished");
     }
 
     @Test
     public void testGetAll() {
+        System.out.println("testGetAll");
         Member member1 = new Member("Binghe 1", "Binghe 1 address", "Binghe 1 description");
         Member member2 = new Member("Binghe 2", "Binghe 2 address", "Binghe 2 description");
         memberRepository.save(member1);
@@ -57,6 +46,8 @@ class MemberRepositoryTest {
         assertThat(members.get(1).getName()).isEqualTo(member2.getName());
         assertThat(members.get(1).getAddress()).isEqualTo(member2.getAddress());
         assertThat(members.get(1).getDescription()).isEqualTo(member2.getDescription());
+
+        System.out.println("testGetAll finished");
     }
 
 //

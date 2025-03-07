@@ -31,8 +31,8 @@ public class TestDatabaseConfig {
         return dataSource;
     }
 
-    @Bean
-    public ApplicationRunner testDatabaseSchameInitializer(JdbcTemplate jdbcTemplate) {
-        return new TestDatabaseSchemeInitializer(jdbcTemplate);
-    }
+//    @Bean
+//    public ApplicationRunner testDatabaseSchameInitializer(JdbcTemplate jdbcTemplate) {
+//        return new TestDatabaseSchemeInitializer(jdbcTemplate);
+//    }
 }
