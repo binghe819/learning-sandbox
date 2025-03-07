@@ -1,34 +1,28 @@
 package com.binghe.config;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
-/**
- * MySQL 연결 안될시 사용.
- */
-//@Profile("!test")
-@Slf4j
-@RequiredArgsConstructor
-//@Component
-public class DatabaseSchameInitializer implements ApplicationRunner {
+public class TestDatabaseSchemeInitializer implements ApplicationRunner {
 
     private final JdbcTemplate jdbcTemplate;
 
+    public TestDatabaseSchemeInitializer(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        String sql = "CREATE TABLE IF NOT EXISTS members (\n" +
+        String sql = "CREATE TABLE IF NOT EXISTS Members (\n" +
                 "    id BIGINT AUTO_INCREMENT PRIMARY KEY,\n" +
                 "    name VARCHAR(255) NOT NULL,\n" +
                 "    address VARCHAR(255),\n" +
                 "    description TEXT\n" +
                 ");\n";
 
+        jdbcTemplate.execute("DROP TABLE IF EXISTS Members");
         jdbcTemplate.execute(sql);
-        log.info("Database table 'members' has been created (if not exists). schema: {}", sql);
+        System.out.println("Database table 'members' has been created (if not exists). schema: " + sql);
     }
 }
