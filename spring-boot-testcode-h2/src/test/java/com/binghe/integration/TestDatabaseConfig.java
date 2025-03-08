@@ -1,6 +1,8 @@
 package com.binghe.integration;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +19,14 @@ public class TestDatabaseConfig implements InitializingBean {
 
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
+    private final RedisConnectionFactory redisConnectionFactory;
 
     private List<String> tableNames;
 
-    public TestDatabaseConfig(DataSource dataSource, JdbcTemplate jdbcTemplate) {
+    public TestDatabaseConfig(DataSource dataSource, JdbcTemplate jdbcTemplate, RedisConnectionFactory redisConnectionFactory) {
         this.dataSource = dataSource;
         this.jdbcTemplate = jdbcTemplate;
+        this.redisConnectionFactory = redisConnectionFactory;
     }
 
     @Override
@@ -73,6 +77,8 @@ public class TestDatabaseConfig implements InitializingBean {
 
     // 모든 테이블 데이터 제거
     private void cleanUpDatabase(Connection conn) throws SQLException {
+        flushRedis();
+
         try (Statement statement = conn.createStatement()) {
 
             // 데이터 무결성 설정 OFF
@@ -90,6 +96,12 @@ public class TestDatabaseConfig implements InitializingBean {
 
             // 데이터 무결성 설정 ON
             statement.executeUpdate("SET REFERENTIAL_INTEGRITY TRUE");
+        }
+    }
+
+    private void flushRedis() {
+        try (RedisConnection redisConnection = redisConnectionFactory.getConnection()) {
+            redisConnection.serverCommands().flushAll();
         }
     }
 }

@@ -25,4 +25,12 @@ public class Member {
     public Member(String name, String address, String description) {
         this(null, name, address, description);
     }
+
+    public void updateAddress(String address) {
+        this.address = address;
+    }
+
+    public void updateDescription(String description) {
+        this.description = description;
+    }
 }

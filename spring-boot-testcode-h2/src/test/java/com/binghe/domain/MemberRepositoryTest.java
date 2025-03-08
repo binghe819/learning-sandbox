@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,36 +51,36 @@ class MemberRepositoryTest extends IntegrationTest {
         System.out.println("testGetAll finished");
     }
 
-//
-//    @Test
-//    public void testDeleteAll() {
-//        memberRepository.save(new Member(1L, "John Doe"));
-//        memberRepository.save(new Member(2L, "Jane Doe"));
-//
-//        memberRepository.deleteAll();
-//        List<Member> allMembers = memberRepository.getAll();
-//        assertEquals(0, allMembers.size());
-//    }
-//
-//    @Test
-//    public void testGetCount() {
-//        memberRepository.save(new Member(1L, "John Doe"));
-//        memberRepository.save(new Member(2L, "Jane Doe"));
-//
-//        int count = memberRepository.getCount();
-//        assertEquals(2, count);
-//    }
-//
-//    @Test
-//    public void testUpdate() {
-//        Member member = new Member(1L, "John Doe");
-//        memberRepository.save(member);
-//
-//        member.setName("John Smith");
-//        memberRepository.update(member);
-//
-//        Optional<Member> updatedMember = memberRepository.findById(1L);
-//        assertTrue(updatedMember.isPresent());
-//        assertEquals("John Smith", updatedMember.get().getName());
-//    }
+    @Test
+    public void testDeleteAll() {
+        memberRepository.save(new Member("Binghe 1", "Binghe 1 address", "Binghe 1 for delete test"));
+        memberRepository.save(new Member("Binghe 2", "Binghe 2 address", "Binghe 2 for delete test"));
+
+        memberRepository.deleteAll();
+        List<Member> allMembers = memberRepository.getAll();
+        assertThat(allMembers).hasSize(0);
+    }
+
+    @Test
+    public void testGetCount() {
+        memberRepository.save(new Member("Binghe 1", "Binghe 1 address", "Binghe 1 for count test"));
+        memberRepository.save(new Member("Binghe 2", "Binghe 2 address", "Binghe 2 for count test"));
+
+        int count = memberRepository.getCount();
+        assertThat(count).isEqualTo(2);
+    }
+
+    @Test
+    public void testUpdate() {
+        Member member = new Member("Binghe 1", "Binghe 1 address", "Binghe 1 for update test");
+        memberRepository.save(member);
+
+        Member needToUpdateMember = memberRepository.findById(1L).orElse(null);
+        needToUpdateMember.updateAddress("updated Binghe 1 address");
+        memberRepository.update(needToUpdateMember);
+
+        Optional<Member> updatedMember = memberRepository.findById(1L);
+        assertThat(updatedMember).isPresent();
+        assertThat(updatedMember.get().getAddress()).isEqualTo("updated Binghe 1 address");
+    }
 }
