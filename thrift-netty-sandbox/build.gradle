@@ -1,0 +1,4 @@
+allprojects {
+    group = 'com.binghe'
+    version = '1.0-SNAPSHOT'
+}

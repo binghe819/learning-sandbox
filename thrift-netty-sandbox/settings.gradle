@@ -1,0 +1,3 @@
+rootProject.name = 'thrift-netty-sandbox'
+include 'thrift-server'
+include 'thrift-client'
