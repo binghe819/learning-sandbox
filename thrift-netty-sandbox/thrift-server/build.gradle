@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation "org.apache.thrift:libthrift:0.22.0"
+    implementation "io.netty:netty-all:${nettyVersion}"
     implementation "org.slf4j:slf4j-api:${slf4jVersion}"
     implementation ("ch.qos.logback:logback-classic:${logbackVersion}") {
         exclude group: 'org.slf4j', module: 'slf4j-api'
@@ -31,29 +32,29 @@ test {
     useJUnitPlatform()
 }
 
-//def thriftSrcDir = file("$projectDir/src/main/thrift")
-//def genJavaDir = file("$buildDir/generated-sources/thrift")
-//
-//tasks.register('thriftCompile', Exec) {
-//    inputs.files fileTree(dir: thriftSrcDir, include: '**/*.thrift')
-//    outputs.dir genJavaDir
-//    doFirst {
-//        genJavaDir.mkdirs()
-//    }
-//    commandLine 'bash', '-c', """
-//        for f in ${thriftSrcDir}/*.thrift;
-//            do
-//                thrift -r --gen java -out ${genJavaDir} "\$f"
-//            done
-//    """
-//}
-//
-//sourceSets {
-//    main {
-//        java {
-//            srcDir genJavaDir
-//        }
-//    }
-//}
-//
-//compileJava.dependsOn thriftCompile
+def thriftSrcDir = file("$projectDir/src/main/thrift")
+def genJavaDir = file("$buildDir/generated-sources/thrift")
+
+tasks.register('thriftCompile', Exec) {
+    inputs.files fileTree(dir: thriftSrcDir, include: '**/*.thrift')
+    outputs.dir genJavaDir
+    doFirst {
+        genJavaDir.mkdirs()
+    }
+    commandLine 'bash', '-c', """
+        for f in ${thriftSrcDir}/*.thrift;
+            do
+                thrift -r --gen java -out ${genJavaDir} "\$f"
+            done
+    """
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir genJavaDir
+        }
+    }
+}
+
+compileJava.dependsOn thriftCompile
