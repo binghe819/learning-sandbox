@@ -1,4 +1,4 @@
-package com.binghe.tsocket;
+package com.binghe;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
-public class ThriftNettyTSocketHandler extends ChannelInboundHandlerAdapter {
+public class ThriftNettySocketHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThriftNettyTSocketHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThriftNettySocketHandler.class);
 
     private final TProcessor processor;
     private final TProtocolFactory protocolFactory;
     private final ExecutorService executorService;
 
-    public ThriftNettyTSocketHandler(TProcessor processor, TProtocolFactory protocolFactory, ExecutorService executorService) {
+    public ThriftNettySocketHandler(TProcessor processor, TProtocolFactory protocolFactory, ExecutorService executorService) {
         if (executorService == null) {
             throw new IllegalArgumentException("ExecutorService is null");
         }
@@ -39,17 +39,17 @@ public class ThriftNettyTSocketHandler extends ChannelInboundHandlerAdapter {
             output = ctx.alloc().buffer();
 
             // Task 제출
-            executorService.execute(new ThriftNettyTSocketTask(ctx, buffer, output, processor, protocolFactory));
+            executorService.execute(new ThriftNettySocketProcessTask(ctx, buffer, output, processor, protocolFactory));
             submitted = true;
 
         } catch (RejectedExecutionException e) {
             LOGGER.error("Thread pool rejected execution", e);
-            ThriftNettyTSocketTask.reject(protocolFactory, ctx, buffer, output, 
+            ThriftNettySocketProcessTask.reject(protocolFactory, ctx, buffer, output,
                     "Server is busy (RejectedExecutionException)", 
                     TApplicationException.INTERNAL_ERROR);
         } catch (Exception e) {
             LOGGER.error("Unexpected error while submitting task", e);
-            ThriftNettyTSocketTask.reject(protocolFactory, ctx, buffer, output, e);
+            ThriftNettySocketProcessTask.reject(protocolFactory, ctx, buffer, output, e);
         } finally {
             // Task가 제출되지 않았으면 버퍼 정리
             // 제출된 경우 Task에서 정리함

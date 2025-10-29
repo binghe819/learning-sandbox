@@ -70,8 +70,8 @@ public class ThriftTSocketDecoder extends ByteToMessageDecoder {
             // 파싱 중 에러 발생 - 잘못된 메시지일 수 있음
             LOGGER.error("Error parsing Thrift message", e);
             in.readerIndex(startReaderIndex);
-            // 에러 발생 시 버퍼를 비워서 다음 메시지를 시도할 수 있게 함
-            in.clear();
+            // 에러 발생 시 버퍼를 비워서 연결 해제. 재연결 유도.
+            ctx.close();
             throw e;
         }
     }

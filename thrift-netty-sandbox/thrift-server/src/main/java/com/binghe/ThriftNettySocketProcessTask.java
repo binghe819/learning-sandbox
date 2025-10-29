@@ -1,6 +1,5 @@
-package com.binghe.tsocket;
+package com.binghe;
 
-import com.binghe.TNettyChannelTransport;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import org.apache.thrift.TApplicationException;
@@ -9,9 +8,9 @@ import org.apache.thrift.protocol.TProtocolFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThriftNettyTSocketTask implements Runnable {
+public class ThriftNettySocketProcessTask implements Runnable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThriftNettyTSocketTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThriftNettySocketProcessTask.class);
 
     private final ChannelHandlerContext ctx;
     private final ByteBuf input;
@@ -19,7 +18,7 @@ public class ThriftNettyTSocketTask implements Runnable {
     private final TProcessor processor;
     private final TProtocolFactory protocolFactory;
 
-    public ThriftNettyTSocketTask(ChannelHandlerContext ctx, ByteBuf input, ByteBuf output, TProcessor processor, TProtocolFactory protocolFactory) {
+    public ThriftNettySocketProcessTask(ChannelHandlerContext ctx, ByteBuf input, ByteBuf output, TProcessor processor, TProtocolFactory protocolFactory) {
         this.ctx = ctx;
         this.input = input;
         this.output = output;

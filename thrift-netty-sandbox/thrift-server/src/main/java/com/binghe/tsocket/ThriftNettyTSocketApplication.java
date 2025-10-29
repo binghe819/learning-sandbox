@@ -1,5 +1,6 @@
 package com.binghe.tsocket;
 
+import com.binghe.ThriftNettySocketHandler;
 import com.binghe.processor.CalculatorServiceImpl;
 import com.binghe.processor.HealthCheckServiceImpl;
 import io.neri.calculator.CalculatorService;
@@ -43,11 +44,11 @@ public class ThriftNettyTSocketApplication {
                 NioIoHandler.newFactory());
 
         ExecutorService workerThreadPool = new ThreadPoolExecutor(
-                100,
+                50,
                 200,
                 60L,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(600),
+                new ArrayBlockingQueue<>(100),
                 new DefaultThreadFactory("neri-business-worker-"),
                 new ThreadPoolExecutor.AbortPolicy()
         );
@@ -77,7 +78,7 @@ public class ThriftNettyTSocketApplication {
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline()
                             .addLast(new ThriftTSocketDecoder())
-                            .addLast(new ThriftNettyTSocketHandler(processor, tProtocolFactory, workerThreadPool));
+                            .addLast(new ThriftNettySocketHandler(processor, tProtocolFactory, workerThreadPool));
                         }
                     });
 
