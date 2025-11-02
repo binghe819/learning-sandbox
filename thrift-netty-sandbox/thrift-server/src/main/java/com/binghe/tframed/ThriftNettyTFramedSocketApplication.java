@@ -3,8 +3,6 @@ package com.binghe.tframed;
 import com.binghe.ThriftNettySocketHandler;
 import com.binghe.processor.CalculatorServiceImpl;
 import com.binghe.processor.HealthCheckServiceImpl;
-import com.binghe.tsocket.ThriftNettyTSocketApplication;
-import com.binghe.tsocket.ThriftTSocketDecoder;
 import io.neri.calculator.CalculatorService;
 import io.neri.health.HealthService;
 import io.netty.bootstrap.ServerBootstrap;
@@ -80,6 +78,7 @@ public class ThriftNettyTFramedSocketApplication {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
+                            // TCP 소켓이 연결될 때마다 호출됨.
                             ch.pipeline()
                                 // Inbound: Frame decoder (like TFramedTransport) → our handler
                                 .addLast(new LengthFieldBasedFrameDecoder(

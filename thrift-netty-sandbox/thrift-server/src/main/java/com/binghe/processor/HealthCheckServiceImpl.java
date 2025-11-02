@@ -14,4 +14,9 @@ public class HealthCheckServiceImpl implements HealthService.Iface {
         log.info("healthCheck() called");
         return "OK";
     }
+
+    @Override
+    public String throwException() throws TException {
+        throw new RuntimeException("throwException() called");
+    }
 }
