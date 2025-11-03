@@ -1,4 +1,4 @@
-package com.binghe.example;
+package com.binghe.tsocket;
 
 public class ThriftNettyTSocketClientHandler {
 }

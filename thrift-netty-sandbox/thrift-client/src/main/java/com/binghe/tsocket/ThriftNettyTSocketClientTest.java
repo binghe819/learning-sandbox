@@ -1,16 +1,12 @@
-package com.binghe.example;
+package com.binghe.tsocket;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.nio.NioIoHandler;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
 public class ThriftNettyTSocketClientTest {
@@ -23,6 +19,7 @@ public class ThriftNettyTSocketClientTest {
         int port = 8080;
 
         try {
+            // 스레드 개수는 동일한 목적지에 대한 커넥션을 의미하는가? 아니면 목적지별 하나의 스레드만을 사용하는가?
             eventLoopGroup = new MultiThreadIoEventLoopGroup(
                     10,
                     new DefaultThreadFactory("neri-netty-", true),
@@ -47,9 +44,11 @@ public class ThriftNettyTSocketClientTest {
 
 
         } catch (Exception e){
-
+            e.printStackTrace();
         } finally {
-
+            if (eventLoopGroup != null) {
+                eventLoopGroup.shutdownGracefully();
+            }
         }
 
     }
