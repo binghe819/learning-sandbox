@@ -72,7 +72,7 @@ public class ClientConnectionPool implements Closeable {
             returnConnection(connection);
             return result;
         } catch (Exception e) {
-            if (connection != null) {
+            if (connection != null && !connection.isValid()) {
                 invalidateConnection(connection);
             }
             throw e;

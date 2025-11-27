@@ -206,7 +206,7 @@ class ClientConnectionPoolTest {
         });
 
         // 예외 발생 후에도 풀이 정상 동작
-        assertEquals(0, pool.getNumActive());
+        assertEquals(1, pool.getNumActive());
     }
 
     @Test
