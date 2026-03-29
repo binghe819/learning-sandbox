@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.binghe'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring 컨테이너 + IoC + DI의 중심
+    implementation 'org.springframework:spring-context:5.3.39' // spring-core / spring-beans / spring-context
+
+    // 데이터 접근 예외를 통일하는 추상화 계층
+    implementation 'org.springframework:spring-dao:2.0.8' // spring-jdbc / spring-tx / spring-dao
+
+    // logback
+    implementation 'org.slf4j:slf4j-api:2.0.6'
+    implementation ('ch.qos.logback:logback-classic:1.4.5') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
+    // lombok
+    implementation 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    runtimeOnly 'com.mysql:mysql-connector-j:8.3.0'
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
