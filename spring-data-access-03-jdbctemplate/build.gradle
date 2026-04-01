@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.binghe'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring 컨테이너 + IoC + DI의 중심
+    implementation 'org.springframework:spring-context:5.3.39' // spring-core / spring-beans / spring-context
+
+    // TransactionManager (DataSourceTransactionManager 등 JDBC 기반 트랜잭션 구현체 + spring-tx 포함)
+    // DataAccessException 등 데이터 접근 예외 계층도 spring-tx를 통해 transitively 제공된다.
+    // (spring-dao:2.0.8은 Spring 2.x 시절의 모놀리식 jar로, 구버전 PlatformTransactionManager를
+    //  classpath에 올려 Spring 5.x와 충돌을 일으키므로 제거)
+    implementation 'org.springframework:spring-jdbc:5.3.39'
+
+    // @Transactional AOP 적용에 필요한 AspectJ 런타임 라이브러리
+    // spring-aop는 포인트컷 표현식 파싱과 프록시 구성 시 aspectjweaver에 의존한다.
+    // 없으면 @EnableTransactionManagement + @Transactional 동작 시 ClassNotFoundException 발생
+    implementation 'org.aspectj:aspectjweaver:1.9.21'
+
+    // logback
+    implementation 'org.slf4j:slf4j-api:2.0.6'
+    implementation ('ch.qos.logback:logback-classic:1.4.5') {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+
+    // lombok
+    implementation 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    runtimeOnly 'com.mysql:mysql-connector-j:8.3.0'
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    // Spring TestContext Framework: @ExtendWith(SpringExtension), @ContextConfiguration,
+    // @Transactional 테스트 자동 롤백 등 Spring 통합 테스트 지원
+    testImplementation 'org.springframework:spring-test:5.3.39'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.assertj:assertj-core:3.24.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
