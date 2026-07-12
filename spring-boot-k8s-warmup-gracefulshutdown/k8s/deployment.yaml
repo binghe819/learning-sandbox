@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warmup-gracefulshutdown
+  labels:
+    app: warmup-gracefulshutdown
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: warmup-gracefulshutdown
+  template:
+    metadata:
+      labels:
+        app: warmup-gracefulshutdown
+      annotations:
+        # Prometheus가 이 Pod의 메트릭을 수집하도록 (Prometheus scrape annotation 방식)
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "8080"
+    spec:
+      # ── 종료 시간 예산 (문서 4-4) ────────────────────────────────
+      #   preStop(sleep 10) + graceful timeout(app: 20s) + JVM 종료 여유
+      #   = 약 30초 < terminationGracePeriodSeconds(40) 를 만족시켜, graceful 진행 중
+      #     SIGKILL이 날아오지 않도록 한다.
+      terminationGracePeriodSeconds: 40
+      containers:
+        - name: app
+          image: spring-boot-k8s-warmup-gracefulshutdown:latest
+          imagePullPolicy: Always   # 매번 레지스트리에서 이미지를 새로 가져온다
+          ports:
+            - name: http
+              containerPort: 8080
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+
+          # ── Warm-up 관련 probe (문서 3-2, 3-4 패턴 A) ─────────────
+          # startupProbe: "기동이 끝났는가"만 확인 → liveness 엔드포인트를 본다.
+          #   웜업 완료가 아니라 부팅 완료(liveness UP, ApplicationStartedEvent) 시점에 성공한다.
+          #   성공할 때까지 liveness/readiness 판정을 유예해 느린 부팅을 재시작으로부터 보호한다.
+          #   확보 예산 = periodSeconds × failureThreshold = 5s × 30 = 최대 150초.
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 5
+            failureThreshold: 30
+
+          # livenessProbe: "프로세스가 살아있는가"만. 웜업에 절대 관여시키지 않는다(재시작 루프 방지).
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            periodSeconds: 10
+            failureThreshold: 3
+
+          # readinessProbe: "트래픽 받을 준비(웜업 완료)가 됐는가".
+          #   WarmupRunner(ApplicationRunner)가 끝나 ApplicationReadyEvent가 발행되어야 UP이 된다.
+          #   → 웜업이 끝날 때까지 트래픽이 유입되지 않는다.
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            periodSeconds: 5
+            failureThreshold: 3
+
+          # ── Graceful Shutdown 관련 preStop (문서 4-2) ────────────
+          # SIGTERM 전에 sleep으로 시간차를 벌어, Endpoints 제거 → kube-proxy 전파가
+          # 완료될 때까지 앱이 정상 서빙을 유지하게 한다. (앱은 이 10초 동안 종료를 인지하지 못함)
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: warmup-gracefulshutdown
+  labels:
+    app: warmup-gracefulshutdown
+spec:
+  selector:
+    app: warmup-gracefulshutdown
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+  type: ClusterIP

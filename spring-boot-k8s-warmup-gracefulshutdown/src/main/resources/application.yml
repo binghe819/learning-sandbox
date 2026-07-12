@@ -1,0 +1,55 @@
+server:
+  port: 8080
+  # Graceful Shutdown: SIGTERM 수신 시 (1) 새 요청 수신 중단 (2) in-flight 요청 완료 대기 후 종료
+  # Spring Boot 3.4부터는 기본값이 graceful이지만, 이 프로젝트(3.3.5)에서는 명시해야 한다.
+  shutdown: graceful
+
+spring:
+  lifecycle:
+    # in-flight 요청 완료를 기다리는 단계별 상한 (기본 30초).
+    # 이 시간을 넘기면 남은 요청과 무관하게 다음 종료 단계로 진행한다.
+    # 주의: preStop(sleep) + 이 값 < terminationGracePeriodSeconds 를 만족해야 한다 (문서 4-4).
+    timeout-per-shutdown-phase: 20s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # health, info 와 함께 prometheus 메트릭 엔드포인트(/actuator/prometheus) 노출
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      # liveness/readiness group을 별도 엔드포인트로 노출
+      #   - /actuator/health/liveness
+      #   - /actuator/health/readiness
+      probes:
+        enabled: true
+      # 각 health component 상태를 응답 본문에 노출 (디버깅용)
+      show-details: always
+      # ── 커스텀 판정 기준을 probe 그룹에 명시적으로 편입 ──────────────
+      # include를 직접 지정하면 기본 구성을 덮어쓰므로, Spring 기본 상태
+      # (readinessState/livenessState)도 유지하려면 반드시 함께 나열해야 한다.
+      # 그룹은 AND 집계 → 나열된 인디케이터가 모두 UP이어야 200을 반환한다.
+      group:
+        readiness:
+          # readinessState(웜업 후 자동 UP) + myReadiness(웜업 완료를 내가 명시적으로 표시)
+          include: readinessState, myReadiness
+        liveness:
+          # livenessState(프로세스 생존) + myLiveness(복구 불가 상태를 내가 명시적으로 표시)
+          include: livenessState, myLiveness
+  health:
+    # 쿠버네티스 환경에서는 자동으로 켜지지만, 로컬에서도 확인할 수 있도록 명시적으로 활성화
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+  metrics:
+    tags:
+      # 모든 메트릭에 application 태그를 붙여 Prometheus에서 구분하기 쉽게 한다
+      application: spring-boot-k8s-warmup-gracefulshutdown
+  prometheus:
+    metrics:
+      export:
+        enabled: true
