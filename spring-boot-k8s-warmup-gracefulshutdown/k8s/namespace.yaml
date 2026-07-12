@@ -4,3 +4,7 @@ metadata:
   name: spring-boot-k8s-probe
   labels:
     app: warmup-gracefulshutdown
+  annotations:
+    # Namespace를 다른 리소스(Deployment/Service)보다 먼저 적용한다.
+    # wave 값이 작을수록 먼저 sync → 네임스페이스가 없어서 실패하는 문제 방지.
+    argocd.argoproj.io/sync-wave: "-1"
