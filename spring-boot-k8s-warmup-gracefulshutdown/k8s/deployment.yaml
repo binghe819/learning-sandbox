@@ -25,6 +25,11 @@ spec:
       #   = 약 30초 < terminationGracePeriodSeconds(40) 를 만족시켜, graceful 진행 중
       #     SIGKILL이 날아오지 않도록 한다.
       terminationGracePeriodSeconds: 40
+      # ── 프라이빗 레지스트리 인증 (문서 참고) ──────────────────────
+      #   docker.io/binghe819/k8s-repo 는 private 저장소라 익명 pull이 거부된다.
+      #   regcred(도커 레지스트리 자격증명 Secret)를 참조해 이미지를 끌어온다.
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: app
           image: binghe819/k8s-repo:spring-boot-k8s-warmup-gracefulshutdown
